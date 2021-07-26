@@ -13,11 +13,11 @@ using ExpensesApp.Shared.Models.Configurations;
 
 namespace ExpensesApp.Server.Data
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public class DbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
         public DbSet<Operation> Operations { get; set; }
         
-        public ApplicationDbContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions) 
+        public DbContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions) 
             : base(options, operationalStoreOptions)
         {
             
