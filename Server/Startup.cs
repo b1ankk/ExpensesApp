@@ -28,6 +28,7 @@ namespace ExpensesApp.Server
         {
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection"))
+                                  .UseSnakeCaseNamingConvention()
             );
 
             services.AddDatabaseDeveloperPageExceptionFilter();
