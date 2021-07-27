@@ -5,6 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ExpensesApp.Client.HttpUtils;
+using ExpensesApp.Client.Services;
 
 namespace ExpensesApp.Client
 {
@@ -28,6 +29,8 @@ namespace ExpensesApp.Client
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ExpensesApp.ServerAPI"));
 
             builder.Services.AddApiAuthorization();
+
+            builder.Services.AddTransient<ICsvParseService, CsvParseService>();
 
             await builder.Build().RunAsync();
         }

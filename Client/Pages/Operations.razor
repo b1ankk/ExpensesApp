@@ -1,0 +1,83 @@
+﻿@page "/operations"
+@using ExpensesApp.Shared.Models
+@using ExpensesApp.Client.HttpUtils
+@using ExpensesApp.Client.Services
+@inject PublicHttpClient httpClient
+@inject NavigationManager navigationManager
+@inject ICsvParseService csvParseService
+
+
+<h3>Operations</h3>
+
+<div style="padding-top: 10px; padding-bottom: 10px; ">
+    <div style="padding: 5px">
+        <InputFile OnChange="LoadOperationsFromFile"></InputFile>
+    </div>
+    <div style="padding: 5px">
+        <button class="btn btn-primary" @onclick="PostLoadedOperationsAndRefreshView">Add From File</button>
+    </div>
+</div>
+
+@if (operations == null) {
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else {
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Operation Date</th>
+            <th>Transaction Date</th>
+            <th>Transaction Type</th>
+            <th>Amount</th>
+            <th>Currency</th>
+            <th>Balance After Operation</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var operation in operations) {
+            <tr>
+                <th>@operation.OperationDate.ToString("d")</th>
+                <th>@operation.TransactionDate.ToString("d")</th>
+                <th>@operation.TransactionType</th>
+                <th>@operation.Amount</th>
+                <th>@operation.Currency</th>
+                <th>@operation.AfterOperationBalance</th>
+                <th>@operation.Description</th>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private Operation[] operations;
+    private IEnumerable<Operation> loadedOperations;
+
+    protected override async Task OnInitializedAsync() {
+        await LoadAndDisplayOperationsFromServer();
+    }
+
+    private async Task LoadAndDisplayOperationsFromServer() {
+        operations = await httpClient.Client.GetFromJsonAsync<Operation[]>("api/operations");
+    }
+
+    private async Task PostLoadedOperationsAndRefreshView() {
+        if (loadedOperations != null) {
+            await httpClient.Client.PostAsJsonAsync("api/operations", loadedOperations);
+            await LoadAndDisplayOperationsFromServer();
+            loadedOperations = null;
+        }
+    }
+
+    private async Task LoadOperationsFromFile(InputFileChangeEventArgs e) {
+        var file = e.File;
+        await using var stream = file.OpenReadStream();
+
+        loadedOperations = await csvParseService.ParseOperationsFromStreamAsync(stream);
+    }
+
+}
