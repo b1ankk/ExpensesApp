@@ -1,7 +1,7 @@
 ﻿@page "/operations"
-@using ExpensesApp.Shared.Models
 @using ExpensesApp.Client.HttpUtils
 @using ExpensesApp.Client.Services
+@using ExpensesApp.Shared.Models.DTOs
 @inject PublicHttpClient httpClient
 @inject NavigationManager navigationManager
 @inject ICsvParseService csvParseService
@@ -39,8 +39,8 @@ else {
         <tbody>
         @foreach (var operation in operations) {
             <tr>
-                <th>@operation.OperationDate.ToString("d")</th>
-                <th>@operation.TransactionDate.ToString("d")</th>
+                <th>@operation.OperationDate.GetValueOrDefault().ToString("d")</th>
+                <th>@operation.TransactionDate.GetValueOrDefault().ToString("d")</th>
                 <th>@operation.TransactionType</th>
                 <th>@operation.Amount</th>
                 <th>@operation.Currency</th>
@@ -54,15 +54,15 @@ else {
 
 
 @code {
-    private Operation[] operations;
-    private IEnumerable<Operation> loadedOperations;
+    private OperationDto[] operations;
+    private IEnumerable<OperationDto> loadedOperations;
 
     protected override async Task OnInitializedAsync() {
         await LoadAndDisplayOperationsFromServer();
     }
 
     private async Task LoadAndDisplayOperationsFromServer() {
-        operations = await httpClient.Client.GetFromJsonAsync<Operation[]>("api/operations");
+        operations = await httpClient.Client.GetFromJsonAsync<OperationDto[]>("api/operations");
     }
 
     private async Task PostLoadedOperationsAndRefreshView() {
@@ -76,8 +76,8 @@ else {
     private async Task LoadOperationsFromFile(InputFileChangeEventArgs e) {
         var file = e.File;
         await using var stream = file.OpenReadStream();
-
-        loadedOperations = await csvParseService.ParseOperationsFromStreamAsync(stream);
+        
+        loadedOperations = await csvParseService.ParseOperationDtosFromStreamAsync(stream);
     }
 
 }

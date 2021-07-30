@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ExpensesApp.Server.Services;
-using ExpensesApp.Shared.Models;
+using ExpensesApp.Shared.Models.DTOs;
+using ExpensesApp.Shared.Models.Factories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpensesApp.Server.Controllers
@@ -21,12 +23,15 @@ namespace ExpensesApp.Server.Controllers
         public async Task<IActionResult> GetOperations()
         {
             var operations = await _dbService.GetOperationsAsync();
-            return Ok(operations);
+            var operationDtos = operations.Select(OperationDtoFactory.CreateFromOperation);
+            
+            return Ok(operationDtos);
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostOperations([FromBody] IEnumerable<Operation> operations)
+        public async Task<IActionResult> PostOperations([FromBody] IEnumerable<OperationDto> operationDtos)
         {
+            var operations = operationDtos.Select(OperationFactory.CreateFromOperationDto);
             await _dbService.AddOperations(operations);
             return Ok();
         }
