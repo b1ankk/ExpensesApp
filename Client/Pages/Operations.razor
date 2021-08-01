@@ -39,8 +39,8 @@ else {
         <tbody>
         @foreach (var operation in operations) {
             <tr>
-                <th>@operation.OperationDate.GetValueOrDefault().ToString("d")</th>
-                <th>@operation.TransactionDate.GetValueOrDefault().ToString("d")</th>
+                <th>@operation.OperationDate.ToString("d")</th>
+                <th>@operation.TransactionDate.ToString("d")</th>
                 <th>@operation.TransactionType</th>
                 <th>@operation.Amount</th>
                 <th>@operation.Currency</th>
