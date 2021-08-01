@@ -8,13 +8,13 @@ namespace ExpensesApp.Shared.Models.Factories
         public static Operation CreateFromOperationDto(OperationDto operationDto)
         {
             return new Operation {
-                IdOperation = operationDto.IdOperation ?? throw new NullReferenceException(),
-                OperationDate = operationDto.OperationDate ?? throw new NullReferenceException(),
-                TransactionDate = operationDto.TransactionDate ?? throw new NullReferenceException(),
+                IdOperation = operationDto.IdOperation.GetValueOrDefault(),
+                OperationDate = operationDto.OperationDate.GetValueOrDefault(),
+                TransactionDate = operationDto.TransactionDate.GetValueOrDefault(),
                 TransactionType = operationDto.TransactionType,
                 Currency = operationDto.Currency,
-                Amount = operationDto.Amount ?? throw new NullReferenceException(),
-                AfterOperationBalance = operationDto.AfterOperationBalance ?? throw new NullReferenceException(),
+                Amount = operationDto.Amount.GetValueOrDefault(),
+                AfterOperationBalance = operationDto.AfterOperationBalance.GetValueOrDefault(),
                 Description = operationDto.Description
             };
         }
