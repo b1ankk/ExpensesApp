@@ -34,6 +34,15 @@ namespace ExpensesApp.Shared.Models.Configurations
             operation.Property(x => x.Description)
                      .IsRequired()
                      .HasMaxLength(500);
+
+
+            operation.HasOne(x => x.OperationType)
+                     .WithMany(x => x.Operations)
+                     .HasForeignKey(x => x.IdOperationType);
+
+            operation.HasOne(x => x.OperationOwner)
+                     .WithMany(x => x.Operations)
+                     .HasForeignKey(x => x.IdOperationOwner);
         }
     }
 }
