@@ -1,16 +1,12 @@
-using ExpensesApp.Server.Data;
 using ExpensesApp.Server.Models;
+using ExpensesApp.Server.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Linq;
-using ExpensesApp.Server.Services;
 using DbContext = ExpensesApp.Server.Data.DbContext;
 
 namespace ExpensesApp.Server
@@ -35,6 +31,8 @@ namespace ExpensesApp.Server
 
             services.AddDbContext<DbContext>();
             services.AddTransient<IDbService, DbService>();
+
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
