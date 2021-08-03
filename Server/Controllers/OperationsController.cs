@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ExpensesApp.Server.Services;
+using ExpensesApp.Shared.IMapperExtensions;
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
+using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpensesApp.Server.Controllers
@@ -26,7 +27,10 @@ namespace ExpensesApp.Server.Controllers
         public async Task<IActionResult> GetOperations()
         {
             var operations = await _dbService.GetOperationsAsync();
-            var operationDtos = operations.Select(_mapper.Map<OperationDto>);
+            if (operations.IsNullOrEmpty())
+                return NotFound();
+            
+            var operationDtos = _mapper.MapAll<OperationDto>(operations);
             
             return Ok(operationDtos);
         }
@@ -34,7 +38,7 @@ namespace ExpensesApp.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> PostOperations([FromBody] IEnumerable<OperationDto> operationDtos)
         {
-            var operations = operationDtos.Select(_mapper.Map<Operation>);
+            var operations = _mapper.MapAll<Operation>(operationDtos);
             await _dbService.AddOperations(operations);
             
             return Ok();
