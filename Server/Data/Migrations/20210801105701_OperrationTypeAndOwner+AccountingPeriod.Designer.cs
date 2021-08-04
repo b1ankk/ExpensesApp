@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ExpensesApp.Server.Data.Migrations
 {
-    [DbContext(typeof(DbContext))]
+    [DbContext(typeof(DbContextImpl))]
     [Migration("20210801105701_OperrationTypeAndOwner+AccountingPeriod")]
     partial class OperrationTypeAndOwnerAccountingPeriod
     {

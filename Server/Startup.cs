@@ -1,5 +1,7 @@
+using ExpensesApp.Server.Data;
+using ExpensesApp.Server.Data.Repositories;
+using ExpensesApp.Server.Data.UnitOfWork;
 using ExpensesApp.Server.Models;
-using ExpensesApp.Server.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using DbContext = ExpensesApp.Server.Data.DbContext;
 
 namespace ExpensesApp.Server
 {
@@ -24,23 +25,24 @@ namespace ExpensesApp.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DbContext>(
+            services.AddDbContext<DbContextImpl>(
                 options => options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection"))
                                   .UseSnakeCaseNamingConvention()
             );
 
-            services.AddDbContext<DbContext>();
-            services.AddTransient<IDbService, DbService>();
+            services.AddDbContext<DbContextImpl>();
+            services.AddScoped<IOperationRepository, OperationRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAutoMapper(typeof(Startup));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<DbContext>();
+                .AddEntityFrameworkStores<DbContextImpl>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, DbContext>();
+                .AddApiAuthorization<ApplicationUser, DbContextImpl>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();

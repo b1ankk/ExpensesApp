@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using ExpensesApp.Server.Services;
+using ExpensesApp.Server.Data.UnitOfWork;
 using ExpensesApp.Shared.IMapperExtensions;
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
@@ -14,19 +14,19 @@ namespace ExpensesApp.Server.Controllers
     [Route("/api/operations")]
     public class OperationsController : ControllerBase
     {
-        private readonly IDbService _dbService;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         
-        public OperationsController(IDbService dbService, IMapper mapper)
+        public OperationsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _dbService = dbService;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> GetOperations()
         {
-            var operations = await _dbService.GetOperationsAsync();
+            var operations = await _unitOfWork.Operations.GetAllAsync();
             if (operations.IsNullOrEmpty())
                 return NotFound();
             
@@ -39,7 +39,8 @@ namespace ExpensesApp.Server.Controllers
         public async Task<IActionResult> PostOperations([FromBody] IEnumerable<OperationDto> operationDtos)
         {
             var operations = _mapper.MapAll<Operation>(operationDtos);
-            await _dbService.AddOperations(operations);
+            await _unitOfWork.Operations.AddRangeAsync(operations);
+            await _unitOfWork.CompleteAsync();
             
             return Ok();
         }
