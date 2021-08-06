@@ -1,4 +1,7 @@
-﻿namespace ExpensesApp.Server.Data.Repositories.Interfaces
+﻿using ExpensesApp.Server.Data.Repositories.Base;
+using ExpensesApp.Shared.Models;
+
+namespace ExpensesApp.Server.Data.Repositories.Interfaces
 {
-    public interface IOperationOwnerRepository { }
+    public interface IOperationOwnerRepository : IRepository<OperationOwner> { }
 }
