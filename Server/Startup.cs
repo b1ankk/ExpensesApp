@@ -1,5 +1,6 @@
 using ExpensesApp.Server.Data;
-using ExpensesApp.Server.Data.Repositories;
+using ExpensesApp.Server.Data.Repositories.Implementations;
+using ExpensesApp.Server.Data.Repositories.Interfaces;
 using ExpensesApp.Server.Data.UnitOfWork;
 using ExpensesApp.Server.Models;
 using Microsoft.AspNetCore.Authentication;

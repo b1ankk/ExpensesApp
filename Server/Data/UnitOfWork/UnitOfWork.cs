@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using ExpensesApp.Server.Data.Repositories;
+using ExpensesApp.Server.Data.Repositories.Interfaces;
 
 namespace ExpensesApp.Server.Data.UnitOfWork
 {

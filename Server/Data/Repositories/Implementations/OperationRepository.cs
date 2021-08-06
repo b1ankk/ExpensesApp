@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpensesApp.Server.Data.Repositories.Base;
+using ExpensesApp.Server.Data.Repositories.Interfaces;
 using ExpensesApp.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExpensesApp.Server.Data.Repositories
+namespace ExpensesApp.Server.Data.Repositories.Implementations
 {
     public class OperationRepository : DbContextImplRepositoryBase<Operation>, IOperationRepository
     {
