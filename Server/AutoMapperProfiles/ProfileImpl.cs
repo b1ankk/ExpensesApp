@@ -11,7 +11,7 @@ namespace ExpensesApp.Server.AutoMapperProfiles
             CreateMap<Operation, OperationDto>().ReverseMap();
             CreateMap<OperationType, OperationTypeDto>().ReverseMap();
             CreateMap<OperationOwner, OperationOwnerDto>().ReverseMap();
-            CreateMap<Operation, ExtendedOperationDto>();
+            CreateMap<Operation, VerboseOperationDto>();
         }
     }
 }

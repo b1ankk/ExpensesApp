@@ -5,7 +5,6 @@ using ExpensesApp.Server.Data.UnitOfWork;
 using ExpensesApp.Shared.AutoMapperExtensions;
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
-using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpensesApp.Server.Controllers
@@ -27,13 +26,24 @@ namespace ExpensesApp.Server.Controllers
         public async Task<IActionResult> GetOperations()
         {
             var operations = await _unitOfWork.Operations.GetAllAsync();
-            if (operations.IsNullOrEmpty())
-                return NotFound();
+            if (operations == null)
+                return NoContent();
             
             var operationDtos = _mapper.MapAll<OperationDto>(operations);
             
             return Ok(operationDtos);
         }
+        
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetOperation(int id) {
+            var operation = await _unitOfWork.Operations.GetAsync(id);
+            if (operation == null)
+                return NotFound();
+            
+            var operationDto = _mapper.Map<OperationDto>(operation);
+            return Ok(operationDto);
+        }
+        
         
         [HttpPost]
         public async Task<IActionResult> PostOperations([FromBody] IEnumerable<OperationDto> operationDtos)

@@ -1,6 +1,6 @@
 ﻿namespace ExpensesApp.Shared.Models.DTOs
 {
-    public class ExtendedOperationDto : OperationDto
+    public class VerboseOperationDto : OperationDto
     {
         public int? IdOperationType { get; set; }
         public int? IdOperationOwner { get; set; }
