@@ -9,5 +9,8 @@ namespace ExpensesApp.Server.Data.Repositories.Interfaces
     {
         public Task<IReadOnlyCollection<Operation>> GetExpendituresAsync();
         public Task<IReadOnlyCollection<Operation>> GetIncomesAsync();
+
+        public Task<Operation> GetOperationWithTypeAndOwner(int id);
+        public Task<IReadOnlyCollection<Operation>> GetOperationsWithTypeAndOwner();
     }
 }
