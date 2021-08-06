@@ -2,7 +2,7 @@
 using System.Linq;
 using AutoMapper;
 
-namespace ExpensesApp.Shared.IMapperExtensions
+namespace ExpensesApp.Shared.AutoMapperExtensions
 {
     public static class AutoMapperExtensions
     {

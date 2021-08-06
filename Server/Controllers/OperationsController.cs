@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using ExpensesApp.Server.Data.UnitOfWork;
-using ExpensesApp.Shared.IMapperExtensions;
+using ExpensesApp.Shared.AutoMapperExtensions;
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
 using IdentityServer4.Extensions;
