@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ExpensesApp.Server.Data.Repositories.Implementations;
 using ExpensesApp.Server.Data.Repositories.Interfaces;
 
 namespace ExpensesApp.Server.Data.UnitOfWork
@@ -7,12 +8,18 @@ namespace ExpensesApp.Server.Data.UnitOfWork
     {
         private readonly DbContextImpl _dbContext;
         
-        public IOperationRepository Operations { get; private set; }
+        public IOperationRepository Operations { get; }
+        public IOperationTypeRepository OperationTypes { get; }
+        public IOperationOwnerRepository OperationOwners { get; }
+        public IAccountPeriodRepository AccountPeriods { get; }
         
-        public UnitOfWork(DbContextImpl dbContext, IOperationRepository operations)
+        public UnitOfWork(DbContextImpl dbContext)
         {
             _dbContext = dbContext;
-            Operations = operations;
+            Operations = new OperationRepository(dbContext);
+            OperationTypes = new OperationTypeRepository(dbContext);
+            OperationOwners = new OperationOwnerRepository(dbContext);
+            AccountPeriods = new AccountingPeriodRepository(dbContext);
         }
         
         
