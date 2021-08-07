@@ -1,0 +1,107 @@
+﻿@page "/operations/edit/{IdOperation:int}"
+@using ExpensesApp.Client.HttpUtils
+@using ExpensesApp.Shared.Models
+@using ExpensesApp.Shared.Models.DTOs
+@using AutoMapper
+@using ExpensesApp.Shared.Constants
+
+@inject PublicHttpClient httpClient
+@inject IMapper mapper; 
+@inject NavigationManager navigationManager;
+
+<h3>OperationEdit</h3>
+
+@if (Operation != null) {
+    
+    <EditForm Model="Operation" OnValidSubmit="SaveChangesAndReturnToOperations">
+        
+        <div class="form-group">
+            <label>Operation Date: </label>
+            <InputDate class="form-control" @bind-Value="@Operation.OperationDate"/>
+            <ValidationMessage For="@(() => Operation.OperationDate)"/>
+        </div>
+        
+        <div class="form-group">
+            <label>Transavtion Date: </label>
+            <InputDate class="form-control" @bind-Value="@Operation.TransactionDate"/>
+            <ValidationMessage For="@(() => Operation.TransactionDate)"/>
+        </div>
+        
+        <div class="form-group">
+            <label>Transaction Type: </label>
+            <InputText class="form-control" @bind-Value="@Operation.TransactionType"/>
+            <ValidationMessage For="@(() => Operation.TransactionType)"/>
+        </div>
+        
+        <div class="form-group">
+            <label>Amount: </label>
+            <InputNumber class="form-control" @bind-Value="@Operation.Amount"/>
+            <ValidationMessage For="@(() => Operation.Amount)"/>
+        </div>
+        
+        <div class="form-group">
+            <label>Currency: </label>
+            <InputText class="form-control" @bind-Value="@Operation.Currency"/>
+            <ValidationMessage For="@(() => Operation.Currency)"/>
+        </div>
+        
+        <div class="form-group">
+            <label>Balance after operation: </label>
+            <InputNumber class="form-control" @bind-Value="@Operation.AfterOperationBalance"/>
+            <ValidationMessage For="@(() => Operation.AfterOperationBalance)"/>
+        </div>
+        
+        <div class="form-group">
+            <label>Description: </label>
+            <InputTextArea rows="5" class="form-control" @bind-Value="@Operation.Description"/>
+            <ValidationMessage For="@(() => Operation.Description)"/>
+        </div>
+        
+        <div class="form-group">
+            <label>Operation Type: </label>
+            <InputSelect class="form-control" @bind-Value="@Operation.IdOperationType">
+                <option value="">none</option>
+                @foreach (var type in OperationTypes) {
+                    <option value="@type.IdOperationType">
+                        @type.Type
+                    </option>
+                }
+            </InputSelect>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </EditForm>
+}
+else {
+    <h4>Loading...</h4>
+}
+
+
+@code {
+    [Parameter]
+    public int IdOperation { get; set; }
+    
+    private Operation Operation { get; set; }
+    private ICollection<OperationTypeDto> OperationTypes { get; set; }
+    
+    protected override async Task OnInitializedAsync() {
+        var operationDto = await httpClient.Client.GetFromJsonAsync<OperationDto>(Paths.Api.Operation(IdOperation));
+        Operation = mapper.Map<Operation>(operationDto);
+        OperationTypes = await httpClient.Client.GetFromJsonAsync<ICollection<OperationTypeDto>>(Paths.Api.OperationTypes);
+    }
+
+    private async Task SaveChangesAndReturnToOperations() {
+        await PutOperation();
+        NavigateBackToOperations();
+    }
+    
+    private void NavigateBackToOperations() {
+        navigationManager.NavigateTo(Paths.Page.Operations);
+    }
+    
+    private async Task PutOperation() {
+        var operationDto = mapper.Map<OperationDto>(Operation);
+        await httpClient.Client.PutAsJsonAsync(Paths.Api.Operations, operationDto);
+    }
+    
+}
