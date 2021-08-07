@@ -6,6 +6,7 @@ using ExpensesApp.Shared.AutoMapperExtensions;
 using ExpensesApp.Shared.Constants;
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
+using ExpensesApp.Shared.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpensesApp.Server.Controllers
@@ -56,5 +57,17 @@ namespace ExpensesApp.Server.Controllers
             return Ok();
         }
         
+        
+        [HttpPut]
+        public async Task<IActionResult> PutOperation([FromBody] OperationDto operationDto) {
+            var operation = await _unitOfWork.Operations.GetAsync(operationDto.IdOperation);
+            if (operation == null)
+                return NotFound();
+            
+            operation.SetProperties(operationDto);
+            await _unitOfWork.CompleteAsync();
+            
+            return Ok();
+        }
     }
 }
