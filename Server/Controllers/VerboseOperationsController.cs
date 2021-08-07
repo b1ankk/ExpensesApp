@@ -10,12 +10,12 @@ namespace ExpensesApp.Server.Controllers
 {
     [ApiController]
     [Route(Paths.Api.VerboseOperations)]
-    public class VerboseOperationController : ControllerBase
+    public class VerboseOperationsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         
-        public VerboseOperationController(IUnitOfWork unitOfWork, IMapper mapper) {
+        public VerboseOperationsController(IUnitOfWork unitOfWork, IMapper mapper) {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
