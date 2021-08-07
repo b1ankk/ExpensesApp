@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ExpensesApp.Client.HttpUtils;
 using ExpensesApp.Client.Services;
+using ExpensesApp.Shared.AutoMapperProfiles;
 
 namespace ExpensesApp.Client
 {
@@ -16,6 +17,8 @@ namespace ExpensesApp.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
+            builder.Services.AddAutoMapper(typeof(ProfileImpl));
+            
             builder.Services.AddHttpClient(
                 "ExpensesApp.ServerAPI", 
                 client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
