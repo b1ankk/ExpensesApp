@@ -2,13 +2,14 @@
 using AutoMapper;
 using ExpensesApp.Server.Data.UnitOfWork;
 using ExpensesApp.Shared.AutoMapperExtensions;
+using ExpensesApp.Shared.Constants;
 using ExpensesApp.Shared.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpensesApp.Server.Controllers
 {
     [ApiController]
-    [Route("api/operations/verbose")]
+    [Route(Paths.Api.VerboseOperations)]
     public class VerboseOperationController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

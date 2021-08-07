@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ExpensesApp.Server.Data.UnitOfWork;
 using ExpensesApp.Shared.AutoMapperExtensions;
+using ExpensesApp.Shared.Constants;
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExpensesApp.Server.Controllers
 {
     [ApiController]
-    [Route("/api/operations")]
+    [Route(Paths.Api.Operations)]
     public class OperationsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

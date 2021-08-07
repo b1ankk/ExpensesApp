@@ -1,6 +1,7 @@
 ﻿@page "/operations"
 @using ExpensesApp.Client.HttpUtils
 @using ExpensesApp.Client.Services
+@using ExpensesApp.Shared.Constants
 @using ExpensesApp.Shared.Models.DTOs
 @inject PublicHttpClient httpClient
 @inject NavigationManager navigationManager
@@ -62,12 +63,12 @@ else {
     }
 
     private async Task LoadAndDisplayOperationsFromServer() {
-        operations = await httpClient.Client.GetFromJsonAsync<OperationDto[]>("api/operations");
+        operations = await httpClient.Client.GetFromJsonAsync<OperationDto[]>(Paths.Api.Operations);
     }
 
     private async Task PostLoadedOperationsAndRefreshView() {
         if (loadedOperations != null) {
-            await httpClient.Client.PostAsJsonAsync("api/operations", loadedOperations);
+            await httpClient.Client.PostAsJsonAsync(Paths.Api.Operations, loadedOperations);
             await LoadAndDisplayOperationsFromServer();
             loadedOperations = null;
         }
