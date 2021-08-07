@@ -33,7 +33,6 @@ namespace ExpensesApp.Server
             );
 
             services.AddDbContext<DbContextImpl>();
-            services.AddScoped<IOperationRepository, OperationRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAutoMapper(typeof(ProfileImpl));
