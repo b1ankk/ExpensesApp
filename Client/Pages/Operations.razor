@@ -1,8 +1,8 @@
 ﻿@page "/operations"
 @using ExpensesApp.Client.HttpUtils
 @using ExpensesApp.Client.Services
-@using ExpensesApp.Shared.Constants
 @using ExpensesApp.Shared.Models.DTOs
+@using ExpensesApp.Shared.Constants
 @inject PublicHttpClient httpClient
 @inject NavigationManager navigationManager
 @inject ICsvParseService csvParseService
@@ -28,6 +28,7 @@ else {
     <table class="table table-striped">
         <thead>
         <tr>
+            <th>Operation Type</th>
             <th>Operation Date</th>
             <th>Transaction Date</th>
             <th>Transaction Type</th>
@@ -40,13 +41,20 @@ else {
         <tbody>
         @foreach (var operation in operations) {
             <tr>
-                <th>@operation.OperationDate.ToString("d")</th>
-                <th>@operation.TransactionDate.ToString("d")</th>
-                <th>@operation.TransactionType</th>
-                <th>@operation.Amount</th>
-                <th>@operation.Currency</th>
-                <th>@operation.AfterOperationBalance</th>
-                <th>@operation.Description</th>
+                <td>@operation.OperationType?.Type</td>
+                <td>@operation.OperationDate.ToString("d")</td>
+                <td>@operation.TransactionDate.ToString("d")</td>
+                <td>@operation.TransactionType</td>
+                <td>@operation.Amount</td>
+                <td>@operation.Currency</td>
+                <td>@operation.AfterOperationBalance</td>
+                <td>@operation.Description</td>
+                <td>
+                    <div style="text-align: center">
+                        <button class="btn btn-primary" @onclick="@(() => NavigateToEditPage(operation))">Edit</button>
+                        <button class="btn btn-danger">Delete</button>
+                    </div>
+                </td>
             </tr>
         }
         </tbody>
@@ -55,17 +63,15 @@ else {
 
 
 @code {
-    private OperationDto[] operations;
+    private IReadOnlyCollection<VerboseOperationDto> operations;
     private IEnumerable<OperationDto> loadedOperations;
-
+    private IReadOnlyCollection<OperationTypeDto> operationTypes;
+    
     protected override async Task OnInitializedAsync() {
         await LoadAndDisplayOperationsFromServer();
+        operationTypes = await GetOperationTypes();
     }
-
-    private async Task LoadAndDisplayOperationsFromServer() {
-        operations = await httpClient.Client.GetFromJsonAsync<OperationDto[]>(Paths.Api.Operations);
-    }
-
+    
     private async Task PostLoadedOperationsAndRefreshView() {
         if (loadedOperations != null) {
             await httpClient.Client.PostAsJsonAsync(Paths.Api.Operations, loadedOperations);
@@ -73,12 +79,30 @@ else {
             loadedOperations = null;
         }
     }
+    
+    private async Task LoadAndDisplayOperationsFromServer() {
+        operations = await GetVerboseOperations();
+    }
 
+    private async Task<IReadOnlyCollection<VerboseOperationDto>> GetVerboseOperations() {
+        return await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<VerboseOperationDto>>(Paths.Api.VerboseOperations);
+    }
+    
+    private async Task<IReadOnlyCollection<OperationTypeDto>> GetOperationTypes() {
+        return await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<OperationTypeDto>>(Paths.Api.OperationTypes);
+    }
+    
+    
+    
     private async Task LoadOperationsFromFile(InputFileChangeEventArgs e) {
         var file = e.File;
         await using var stream = file.OpenReadStream();
         
         loadedOperations = await csvParseService.ParseOperationDtosFromStreamAsync(stream);
     }
-
+    
+    
+    void NavigateToEditPage(VerboseOperationDto operation) {
+        navigationManager.NavigateTo($"{Paths.Page.EditOperation}/{operation.IdOperation}");
+    }
 }
