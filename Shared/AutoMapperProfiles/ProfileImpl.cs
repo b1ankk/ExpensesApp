@@ -2,7 +2,7 @@
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
 
-namespace ExpensesApp.Server.AutoMapperProfiles
+namespace ExpensesApp.Shared.AutoMapperProfiles
 {
     public class ProfileImpl : Profile
     {

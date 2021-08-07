@@ -3,6 +3,7 @@ using ExpensesApp.Server.Data.Repositories.Implementations;
 using ExpensesApp.Server.Data.Repositories.Interfaces;
 using ExpensesApp.Server.Data.UnitOfWork;
 using ExpensesApp.Server.Models;
+using ExpensesApp.Shared.AutoMapperProfiles;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,7 +36,7 @@ namespace ExpensesApp.Server
             services.AddScoped<IOperationRepository, OperationRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(typeof(ProfileImpl));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
