@@ -65,15 +65,21 @@
                 </InputSelect>
             </div>
             
-            <div class="w-100"></div>
+            <div class="form-group col-4">
+                <label>Operation Owner: </label>
+                <InputSelect class="form-select" @bind-Value="@Operation.IdOperationOwner">
+                    <option value="">none</option>
+                    @foreach (var owner in OperationOwners) {
+                        <option value="@owner.IdOperationOwner">
+                            @owner.Owner
+                        </option>
+                    }
+                </InputSelect>
+            </div>
             
             <div class="col-4">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
-        </div>
-        
-        <div class="row">
-            
         </div>
         
     </EditForm>
@@ -90,11 +96,15 @@
     public EventCallback<Operation> OnValidSubmit { get; set; }
 
     private IReadOnlyCollection<OperationTypeDto> OperationTypes { get; set; }
-
+    private IReadOnlyCollection<OperationOwnerDto> OperationOwners { get; set; }
+    
     protected override async Task OnInitializedAsync() {
         OperationTypes = await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<OperationTypeDto>>(
             Paths.Api.OperationTypes
-            );
+        );
+        OperationOwners = await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<OperationOwnerDto>>(
+            Paths.Api.OperationOwners
+        );
     }
 
     private async Task InvokeCallbackAsync() {

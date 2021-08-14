@@ -9,6 +9,7 @@
             public const string Operations = Root + "/operations";
             public const string VerboseOperations = Operations + "/verbose";
             public const string OperationTypes =  Root + "/operation_types";
+            public const string OperationOwners = Root + "/operation_owners";
             
             public static string Operation(int id) {
                 return $"{Operations}/{id}";
