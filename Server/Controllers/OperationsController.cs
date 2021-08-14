@@ -15,58 +15,55 @@ namespace ExpensesApp.Server.Controllers
     [Route(Paths.Api.Operations)]
     public class OperationsController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        
-        public OperationsController(IUnitOfWork unitOfWork, IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+        private readonly IUnitOfWork unitOfWork;
+        private readonly IMapper mapper;
+
+        public OperationsController(IUnitOfWork unitOfWork, IMapper mapper) {
+            this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
         }
-        
+
         [HttpGet]
-        public async Task<IActionResult> GetOperations()
-        {
-            var operations = await _unitOfWork.Operations.GetAllAsync();
+        public async Task<IActionResult> GetOperations() {
+            IReadOnlyCollection<Operation> operations = await unitOfWork.Operations.GetAllAsync();
             if (operations == null)
                 return NoContent();
-            
-            var operationDtos = _mapper.MapAll<OperationDto>(operations);
-            
+
+            ICollection<OperationDto> operationDtos = mapper.MapAll<OperationDto>(operations);
+
             return Ok(operationDtos);
         }
-        
+
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetOperation(int id) {
-            var operation = await _unitOfWork.Operations.GetAsync(id);
+            Operation operation = await unitOfWork.Operations.GetAsync(id);
             if (operation == null)
                 return NotFound();
-            
-            var operationDto = _mapper.Map<OperationDto>(operation);
+
+            var operationDto = mapper.Map<OperationDto>(operation);
             return Ok(operationDto);
         }
-        
-        
+
+
         [HttpPost]
-        public async Task<IActionResult> PostOperations([FromBody] IEnumerable<OperationDto> operationDtos)
-        {
-            var operations = _mapper.MapAll<Operation>(operationDtos);
-            await _unitOfWork.Operations.AddRangeAsync(operations);
-            await _unitOfWork.CompleteAsync();
-            
+        public async Task<IActionResult> PostOperations([FromBody] IEnumerable<OperationDto> operationDtos) {
+            ICollection<Operation> operations = mapper.MapAll<Operation>(operationDtos);
+            await unitOfWork.Operations.AddRangeAsync(operations);
+            await unitOfWork.CompleteAsync();
+
             return Ok();
         }
-        
-        
+
+
         [HttpPut]
         public async Task<IActionResult> PutOperation([FromBody] OperationDto operationDto) {
-            var operation = await _unitOfWork.Operations.GetAsync(operationDto.IdOperation);
+            Operation operation = await unitOfWork.Operations.GetAsync(operationDto.IdOperation);
             if (operation == null)
                 return NotFound();
-            
+
             operation.SetProperties(operationDto);
-            await _unitOfWork.CompleteAsync();
-            
+            await unitOfWork.CompleteAsync();
+
             return Ok();
         }
     }

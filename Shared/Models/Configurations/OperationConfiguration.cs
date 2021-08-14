@@ -5,8 +5,7 @@ namespace ExpensesApp.Shared.Models.Configurations
 {
     public class OperationConfiguration : IEntityTypeConfiguration<Operation>
     {
-        public void Configure(EntityTypeBuilder<Operation> operation)
-        {
+        public void Configure(EntityTypeBuilder<Operation> operation) {
             operation.HasKey(x => x.IdOperation);
 
             operation.Property(x => x.OperationDate)

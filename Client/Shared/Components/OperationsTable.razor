@@ -1,6 +1,5 @@
 ﻿@using ExpensesApp.Shared.Models.DTOs
 @using ExpensesApp.Shared.Constants
-
 @inject NavigationManager navigationManager
 
 @if (Operations != null) {
@@ -20,8 +19,8 @@
         </thead>
         <tbody>
         @{
-            int i = 0;
-            @foreach (var operation in Operations) {
+            var i = 0;
+            @foreach (VerboseOperationDto operation in Operations) {
                 var collapseId = $"desc{i++}";
 
                 <tr class="align-middle" data-bs-toggle="collapse" role="button" href="#@collapseId" aria-expanded="false" aria-controls="collapseExample">

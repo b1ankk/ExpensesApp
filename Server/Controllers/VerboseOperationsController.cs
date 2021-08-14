@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using ExpensesApp.Server.Data.UnitOfWork;
 using ExpensesApp.Shared.AutoMapperExtensions;
 using ExpensesApp.Shared.Constants;
+using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,33 +14,33 @@ namespace ExpensesApp.Server.Controllers
     [Route(Paths.Api.VerboseOperations)]
     public class VerboseOperationsController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        
+        private readonly IUnitOfWork unitOfWork;
+        private readonly IMapper mapper;
+
         public VerboseOperationsController(IUnitOfWork unitOfWork, IMapper mapper) {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
         }
-        
-        
+
+
         [HttpGet]
         public async Task<IActionResult> GetVerboseOperations() {
-            var operations = await _unitOfWork.Operations.GetOperationsWithTypeAndOwner();
+            IReadOnlyCollection<Operation> operations = await unitOfWork.Operations.GetOperationsWithTypeAndOwner();
             if (operations == null)
                 return NoContent();
-            
-            var operationDtos = _mapper.MapAll<VerboseOperationDto>(operations);
-            
+
+            ICollection<VerboseOperationDto> operationDtos = mapper.MapAll<VerboseOperationDto>(operations);
+
             return Ok(operationDtos);
         }
-        
+
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetVerboseOperation(int id) {
-            var operation = await _unitOfWork.Operations.GetOperationWithTypeAndOwner(id);
+            Operation operation = await unitOfWork.Operations.GetOperationWithTypeAndOwner(id);
             if (operation == null)
                 return NotFound();
-            
-            var verboseOperationDto = _mapper.Map<VerboseOperationDto>(operation);
+
+            var verboseOperationDto = mapper.Map<VerboseOperationDto>(operation);
             return Ok(verboseOperationDto);
         }
     }

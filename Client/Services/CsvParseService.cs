@@ -13,14 +13,14 @@ namespace ExpensesApp.Client.Services
         public async Task<IEnumerable<OperationDto>> ParseOperationDtosFromStreamAsync(Stream fs) {
             var operations = new List<OperationDto>();
             using var reader = new StreamReader(fs);
-            
+
             await reader.ReadLineAsync(); // skip headers
-            
+
             string line;
             while ((line = await reader.ReadLineAsync()) != null) {
-                var parts = line.Split("\",\"");
+                string[] parts = line.Split("\",\"");
                 parts = parts.Select(p => p.Trim().Replace("\"", "")).ToArray();
-                
+
                 var operation = new OperationDto {
                     OperationDate = DateTime.Parse(parts[0]),
                     TransactionDate = DateTime.Parse(parts[1]),
@@ -32,7 +32,7 @@ namespace ExpensesApp.Client.Services
                 };
                 operations.Add(operation);
             }
-            
+
             return operations;
         }
     }

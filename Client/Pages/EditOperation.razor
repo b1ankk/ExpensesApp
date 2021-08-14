@@ -1,10 +1,9 @@
 ﻿@page "/operations/edit/{IdOperation:int}"
 @using ExpensesApp.Client.HttpUtils
+@using AutoMapper
 @using ExpensesApp.Shared.Models
 @using ExpensesApp.Shared.Models.DTOs
-@using AutoMapper
 @using ExpensesApp.Shared.Constants
-@using ExpensesApp.Client.Shared.Components
 
 @inject PublicHttpClient httpClient
 @inject IMapper mapper; 
@@ -13,7 +12,7 @@
 
 <div class="container-md">
     <h3>Edit operation</h3>
-    
+
     @if (Operation != null) {
         <OperationEditForm Operation="Operation" OnValidSubmit="SaveChangesAndReturnToOperations"/>
     }
@@ -26,30 +25,31 @@
 
 
 @code {
+
     [Parameter]
     public int IdOperation { get; set; }
-    
+
     private Operation Operation { get; set; }
     private ICollection<OperationTypeDto> OperationTypes { get; set; }
-    
+
     protected override async Task OnInitializedAsync() {
         var operationDto = await httpClient.Client.GetFromJsonAsync<OperationDto>(Paths.Api.Operation(IdOperation));
         Operation = mapper.Map<Operation>(operationDto);
         OperationTypes = await httpClient.Client.GetFromJsonAsync<ICollection<OperationTypeDto>>(Paths.Api.OperationTypes);
     }
-    
+
     private async Task SaveChangesAndReturnToOperations() {
         await PutOperation();
         NavigateBackToOperations();
     }
-    
+
     private void NavigateBackToOperations() {
         navigationManager.NavigateTo(Paths.Page.Operations);
     }
-    
+
     private async Task PutOperation() {
         var operationDto = mapper.Map<OperationDto>(Operation);
         await httpClient.Client.PutAsJsonAsync(Paths.Api.Operations, operationDto);
     }
-    
+
 }

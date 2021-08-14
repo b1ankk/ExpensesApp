@@ -1,6 +1,4 @@
 using ExpensesApp.Server.Data;
-using ExpensesApp.Server.Data.Repositories.Implementations;
-using ExpensesApp.Server.Data.Repositories.Interfaces;
 using ExpensesApp.Server.Data.UnitOfWork;
 using ExpensesApp.Server.Models;
 using ExpensesApp.Shared.AutoMapperProfiles;
@@ -16,8 +14,7 @@ namespace ExpensesApp.Server
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
+        public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
 
@@ -25,8 +22,7 @@ namespace ExpensesApp.Server
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
-        {
+        public void ConfigureServices(IServiceCollection services) {
             services.AddDbContext<DbContextImpl>(
                 options => options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection"))
                                   .UseSnakeCaseNamingConvention()
@@ -40,29 +36,26 @@ namespace ExpensesApp.Server
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<DbContextImpl>();
+                    .AddEntityFrameworkStores<DbContextImpl>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, DbContextImpl>();
+                    .AddApiAuthorization<ApplicationUser, DbContextImpl>();
 
             services.AddAuthentication()
-                .AddIdentityServerJwt();
+                    .AddIdentityServerJwt();
 
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+            if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseMigrationsEndPoint();
                 app.UseWebAssemblyDebugging();
             }
-            else
-            {
+            else {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -78,12 +71,13 @@ namespace ExpensesApp.Server
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("index.html");
-            });
+            app.UseEndpoints(
+                endpoints => {
+                    endpoints.MapRazorPages();
+                    endpoints.MapControllers();
+                    endpoints.MapFallbackToFile("index.html");
+                }
+            );
         }
     }
 }

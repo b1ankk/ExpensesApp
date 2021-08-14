@@ -3,7 +3,7 @@
 @using ExpensesApp.Client.Services
 @using ExpensesApp.Shared.Models.DTOs
 @using ExpensesApp.Shared.Constants
-@using ExpensesApp.Client.Shared.Components
+@using System.IO
 
 
 @inject PublicHttpClient httpClient
@@ -63,12 +63,13 @@
     private async Task<IReadOnlyCollection<OperationTypeDto>> GetOperationTypes() {
         return await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<OperationTypeDto>>(Paths.Api.OperationTypes);
     }
-    
-    
+
+
     private async Task LoadOperationsFromFile(InputFileChangeEventArgs e) {
-        var file = e.File;
-        await using var stream = file.OpenReadStream();
-        
+        IBrowserFile file = e.File;
+        await using Stream stream = file.OpenReadStream();
+
         loadedOperations = await csvParseService.ParseOperationDtosFromStreamAsync(stream);
     }
+
 }

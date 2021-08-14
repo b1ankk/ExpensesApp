@@ -10,7 +10,7 @@ namespace ExpensesApp.Server.Data.UnitOfWork
         IOperationTypeRepository OperationTypes { get; }
         IOperationOwnerRepository OperationOwners { get; }
         IAccountPeriodRepository AccountPeriods { get; }
-        
+
         public Task<int> CompleteAsync();
     }
 }

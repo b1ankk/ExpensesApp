@@ -6,8 +6,7 @@ namespace ExpensesApp.Shared.AutoMapperProfiles
 {
     public class ProfileImpl : Profile
     {
-        public ProfileImpl()
-        {
+        public ProfileImpl() {
             CreateMap<Operation, OperationDto>().ReverseMap();
             CreateMap<OperationType, OperationTypeDto>().ReverseMap();
             CreateMap<OperationOwner, OperationOwnerDto>().ReverseMap();

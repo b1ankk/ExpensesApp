@@ -1,9 +1,7 @@
-﻿@using Microsoft.AspNetCore.Components
+﻿@using ExpensesApp.Client.HttpUtils
 @using ExpensesApp.Shared.Models
-@using ExpensesApp.Client.HttpUtils
-@using ExpensesApp.Shared.Constants
 @using ExpensesApp.Shared.Models.DTOs
-
+@using ExpensesApp.Shared.Constants
 @inject PublicHttpClient httpClient
 
 
@@ -57,31 +55,31 @@
                 <label>Operation Type: </label>
                 <InputSelect class="form-select" @bind-Value="@Operation.IdOperationType">
                     <option value="">none</option>
-                    @foreach (var type in OperationTypes) {
+                    @foreach (OperationTypeDto type in OperationTypes) {
                         <option value="@type.IdOperationType">
                             @type.Type
                         </option>
                     }
                 </InputSelect>
             </div>
-            
+
             <div class="form-group col-4">
                 <label>Operation Owner: </label>
                 <InputSelect class="form-select" @bind-Value="@Operation.IdOperationOwner">
                     <option value="">none</option>
-                    @foreach (var owner in OperationOwners) {
+                    @foreach (OperationOwnerDto owner in OperationOwners) {
                         <option value="@owner.IdOperationOwner">
                             @owner.Owner
                         </option>
                     }
                 </InputSelect>
             </div>
-            
+
             <div class="col-4">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>
-        
+
     </EditForm>
 
 
@@ -97,14 +95,14 @@
 
     private IReadOnlyCollection<OperationTypeDto> OperationTypes { get; set; }
     private IReadOnlyCollection<OperationOwnerDto> OperationOwners { get; set; }
-    
+
     protected override async Task OnInitializedAsync() {
         OperationTypes = await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<OperationTypeDto>>(
             Paths.Api.OperationTypes
-        );
+            );
         OperationOwners = await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<OperationOwnerDto>>(
             Paths.Api.OperationOwners
-        );
+            );
     }
 
     private async Task InvokeCallbackAsync() {
