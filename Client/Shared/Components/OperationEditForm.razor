@@ -1,0 +1,104 @@
+﻿@using Microsoft.AspNetCore.Components
+@using ExpensesApp.Shared.Models
+@using ExpensesApp.Client.HttpUtils
+@using ExpensesApp.Shared.Constants
+@using ExpensesApp.Shared.Models.DTOs
+
+@inject PublicHttpClient httpClient
+
+
+@if (Operation != null && OperationTypes != null) {
+
+    <EditForm Model="Operation" OnValidSubmit="InvokeCallbackAsync" class="container">
+        <div class="row g-3">
+            <div class="form-group col-6">
+                <label>Operation Date: </label>
+                <InputDate class="form-control" @bind-Value="@Operation.OperationDate"/>
+                <ValidationMessage For="@(() => Operation.OperationDate)"/>
+            </div>
+
+            <div class="form-group col-6">
+                <label>Transavtion Date: </label>
+                <InputDate class="form-control" @bind-Value="@Operation.TransactionDate"/>
+                <ValidationMessage For="@(() => Operation.TransactionDate)"/>
+            </div>
+
+            <div class="form-group col-3">
+                <label>Transaction Type: </label>
+                <InputText class="form-control" @bind-Value="@Operation.TransactionType"/>
+                <ValidationMessage For="@(() => Operation.TransactionType)"/>
+            </div>
+
+            <div class="form-group col-3">
+                <label>Amount: </label>
+                <InputNumber class="form-control" @bind-Value="@Operation.Amount"/>
+                <ValidationMessage For="@(() => Operation.Amount)"/>
+            </div>
+
+            <div class="form-group col-3">
+                <label>Currency: </label>
+                <InputText class="form-control" @bind-Value="@Operation.Currency"/>
+                <ValidationMessage For="@(() => Operation.Currency)"/>
+            </div>
+
+            <div class="form-group col-3">
+                <label>Balance after operation: </label>
+                <InputNumber class="form-control" @bind-Value="@Operation.AfterOperationBalance"/>
+                <ValidationMessage For="@(() => Operation.AfterOperationBalance)"/>
+            </div>
+
+            <div class="form-group col-12">
+                <label>Description: </label>
+                <InputTextArea rows="5" class="form-control" @bind-Value="@Operation.Description"/>
+                <ValidationMessage For="@(() => Operation.Description)"/>
+            </div>
+
+            <div class="form-group col-4">
+                <label>Operation Type: </label>
+                <InputSelect class="form-select" @bind-Value="@Operation.IdOperationType">
+                    <option value="">none</option>
+                    @foreach (var type in OperationTypes) {
+                        <option value="@type.IdOperationType">
+                            @type.Type
+                        </option>
+                    }
+                </InputSelect>
+            </div>
+            
+            <div class="w-100"></div>
+            
+            <div class="col-4">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+        
+        <div class="row">
+            
+        </div>
+        
+    </EditForm>
+
+
+}
+
+@code {
+
+    [Parameter]
+    public Operation Operation { get; set; }
+
+    [Parameter]
+    public EventCallback<Operation> OnValidSubmit { get; set; }
+
+    private IReadOnlyCollection<OperationTypeDto> OperationTypes { get; set; }
+
+    protected override async Task OnInitializedAsync() {
+        OperationTypes = await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<OperationTypeDto>>(
+            Paths.Api.OperationTypes
+            );
+    }
+
+    private async Task InvokeCallbackAsync() {
+        await OnValidSubmit.InvokeAsync(Operation);
+    }
+
+}
