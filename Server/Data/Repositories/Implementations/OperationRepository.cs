@@ -4,10 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ExpensesApp.Server.Data.Repositories.Base.Implementation;
+using ExpensesApp.Server.Data.Repositories.Base.QueryableExtensions;
 using ExpensesApp.Server.Data.Repositories.Interfaces;
 using ExpensesApp.Shared.Models;
+using ExpensesApp.Shared.Utility.Sorting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace ExpensesApp.Server.Data.Repositories.Implementations
 {
@@ -50,11 +51,16 @@ namespace ExpensesApp.Server.Data.Repositories.Implementations
             return result;
         }
 
-        private IIncludableQueryable<Operation, OperationOwner> QueryOperationsWithTypeAndOwner() {
+        private IQueryable<Operation> QueryOperationsWithTypeAndOwner() {
             return DbContextImpl
                    .Operations
                    .Include(x => x.OperationType)
-                   .Include(x => x.OperationOwner);
+                   .Include(x => x.OperationOwner)
+                   .OrderBy(
+                       SortOrderKey<Operation>.DescForKey(x => x.OperationDate),
+                       SortOrderKey<Operation>.DescForKey(x => x.TransactionDate),
+                       SortOrderKey<Operation>.DescForKey(x => x.IdOperation)
+                   );
         }
     }
 }

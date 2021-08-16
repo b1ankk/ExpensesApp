@@ -25,7 +25,8 @@ namespace ExpensesApp.Server.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetOperationOwners() {
-            IReadOnlyCollection<OperationOwner> owners = await unitOfWork.OperationOwners.GetAllAsync();
+            IReadOnlyCollection<OperationOwner> owners = 
+                await unitOfWork.OperationOwners.GetOperationOwnersSortedAsync();
             ICollection<OperationOwnerDto> ownersDtos = mapper.MapAll<OperationOwnerDto>(owners);
 
             return Ok(ownersDtos);

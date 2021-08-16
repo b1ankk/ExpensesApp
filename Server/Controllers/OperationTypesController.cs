@@ -25,8 +25,8 @@ namespace ExpensesApp.Server.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetOperationTypes() {
-            IReadOnlyCollection<OperationType> operationTypes = await unitOfWork.OperationTypes.GetAllAsync();
-
+            IReadOnlyCollection<OperationType> operationTypes = 
+                await unitOfWork.OperationTypes.GetOperationTypesSortedAsync();
             ICollection<OperationTypeDto> operationTypeDtos = mapper.MapAll<OperationTypeDto>(operationTypes);
 
             return Ok(operationTypeDtos);
