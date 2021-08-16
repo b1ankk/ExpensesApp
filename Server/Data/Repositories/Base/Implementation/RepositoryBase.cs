@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using ExpensesApp.Server.Data.Repositories.Base.QueryableExtensions;
 using ExpensesApp.Shared.Utility.Sorting;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExpensesApp.Server.Data.Repositories.Base
+namespace ExpensesApp.Server.Data.Repositories.Base.Implementation
 {
     public abstract class RepositoryBase<T> : IRepository<T> where T : class
     {
@@ -26,7 +27,7 @@ namespace ExpensesApp.Server.Data.Repositories.Base
         }
 
         public async Task<IReadOnlyCollection<T>> GetAllAsync(params SortOrderKey<T>[] orderKeys) {
-            IReadOnlyCollection<T> result = await GetAllWhereAsync(DefaultPredicate);
+            IReadOnlyCollection<T> result = await GetAllWhereAsync(DefaultPredicate, orderKeys);
             return result;
         }
 
@@ -55,9 +56,8 @@ namespace ExpensesApp.Server.Data.Repositories.Base
         ) {
             IQueryable<T> query = DbContext.Set<T>()
                                            .Where(predicate)
-                                           .OrderByAll(orderKeys)
-                                           .Skip(pageSize * pageIndex)
-                                           .Take(pageSize);
+                                           .OrderBy(orderKeys)
+                                           .GetPage(pageSize, pageIndex);
             List<T> result = await query.ToListAsync();
             return result;
         }
@@ -78,34 +78,6 @@ namespace ExpensesApp.Server.Data.Repositories.Base
 
         public void RemoveRange(IEnumerable<T> items) {
             DbContext.RemoveRange(items);
-        }
-    }
-
-
-    internal static class QuerySortExtension
-    {
-        internal static IQueryable<T> OrderByAll<T>(this IQueryable<T> query, params SortOrderKey<T>[] orderKeys) {
-            if (orderKeys.Length == 0)
-                return query;
-
-            IOrderedQueryable<T> ordered = query.OrderedBy(orderKeys[0]);
-            ordered = orderKeys.Skip(1).Aggregate(ordered, ThenOrderedBy);
-            return ordered;
-        }
-
-        private static IOrderedQueryable<T> OrderedBy<T>(this IQueryable<T> query, SortOrderKey<T> orderKey) {
-            IOrderedQueryable<T> ordered =
-                orderKey.SortDirection == SortDirection.Descending
-                    ? query.OrderByDescending(orderKey.Key)
-                    : query.OrderBy(orderKey.Key);
-            return ordered;
-        }
-
-        private static IOrderedQueryable<T> ThenOrderedBy<T>(this IOrderedQueryable<T> query, SortOrderKey<T> orderKey) {
-            query = orderKey.SortDirection == SortDirection.Descending
-                ? query.ThenByDescending(orderKey.Key)
-                : query.ThenBy(orderKey.Key);
-            return query;
         }
     }
 }

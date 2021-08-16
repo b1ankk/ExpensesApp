@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using ExpensesApp.Server.Data.Repositories.Base;
+using ExpensesApp.Server.Data.Repositories.Base.Implementation;
 using ExpensesApp.Server.Data.Repositories.Interfaces;
 using ExpensesApp.Shared.Models;
 using Microsoft.EntityFrameworkCore;

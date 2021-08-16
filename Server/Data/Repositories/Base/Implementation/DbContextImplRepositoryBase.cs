@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace ExpensesApp.Server.Data.Repositories.Base
+namespace ExpensesApp.Server.Data.Repositories.Base.Implementation
 {
     public abstract class DbContextImplRepositoryBase<T> : RepositoryBase<T> where T : class
     {

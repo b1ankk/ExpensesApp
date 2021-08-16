@@ -1,4 +1,4 @@
-﻿using ExpensesApp.Server.Data.Repositories.Base;
+﻿using ExpensesApp.Server.Data.Repositories.Base.Implementation;
 using ExpensesApp.Server.Data.Repositories.Interfaces;
 using ExpensesApp.Shared.Models;
 using Microsoft.EntityFrameworkCore;
