@@ -1,4 +1,5 @@
-﻿using ExpensesApp.Server.Models;
+﻿using System;
+using ExpensesApp.Server.Models;
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.Configurations;
 using IdentityServer4.EntityFramework.Options;
@@ -19,6 +20,10 @@ namespace ExpensesApp.Server.Data
         public DbContextImpl(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions)
             : base(options, operationalStoreOptions) { }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.LogTo(Console.WriteLine);
+        }
 
         protected override void OnModelCreating(ModelBuilder builder) {
             base.OnModelCreating(builder);
