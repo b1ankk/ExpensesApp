@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using ExpensesApp.Server.Models;
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.Configurations;
@@ -22,7 +22,7 @@ namespace ExpensesApp.Server.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.LogTo(Console.WriteLine);
+            optionsBuilder.LogTo(x => File.AppendAllText("EntityFramework.log", $"{x}\n\n"));
         }
 
         protected override void OnModelCreating(ModelBuilder builder) {
