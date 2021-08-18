@@ -11,6 +11,8 @@
             public const string OperationTypes = Root + "/operation_types";
             public const string OperationOwners = Root + "/operation_owners";
 
+            public const string AccountingPeriods = Root + "/accounting_periods";
+
             public static string Operation(int id) {
                 return $"{Operations}/{id}";
             }

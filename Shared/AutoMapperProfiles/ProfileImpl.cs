@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
+using ExpensesApp.Shared.Models.UtilityModels;
 
 namespace ExpensesApp.Shared.AutoMapperProfiles
 {
@@ -11,6 +12,9 @@ namespace ExpensesApp.Shared.AutoMapperProfiles
             CreateMap<OperationType, OperationTypeDto>().ReverseMap();
             CreateMap<OperationOwner, OperationOwnerDto>().ReverseMap();
             CreateMap<Operation, VerboseOperationDto>();
+            
+            CreateMap<AccountingSummary, AccountingSummaryDto>().ReverseMap();
+            CreateMap<AccountingSummary.Row, AccountingSummaryDto.Row>().ReverseMap();
         }
     }
 }
