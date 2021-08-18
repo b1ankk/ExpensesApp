@@ -8,10 +8,10 @@
 
             public const string Operations = Root + "/operations";
             public const string VerboseOperations = Operations + "/verbose";
-            public const string OperationTypes = Root + "/operation_types";
-            public const string OperationOwners = Root + "/operation_owners";
+            public const string OperationTypes = Root + "/operation-types";
+            public const string OperationOwners = Root + "/operation-owners";
 
-            public const string AccountingPeriods = Root + "/accounting_periods";
+            public const string AccountingPeriods = Root + "/accounting-periods";
 
             public static string Operation(int id) {
                 return $"{Operations}/{id}";
