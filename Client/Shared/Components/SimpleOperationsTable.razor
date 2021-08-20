@@ -1,0 +1,35 @@
+﻿@using ExpensesApp.Shared.Models.DTOs
+
+@if (Operations != null) {
+    var tableId = $"table-{TableIndex}";
+    
+    <table class="py-2 my-2 table table-bordered fs-6">
+        <thead>
+            <tr>
+                <th>Operation Date</th>
+                <th>Transaction Date</th>
+                <th>Transaction Type</th>
+                <th>Amount</th>
+                <th>Currency</th>
+                <th>Balance After Operation</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var rowIndex = 0;
+                @foreach (OperationDto operation in Operations) {
+                    <SimpleOperationsTableRow Operation="operation" TableId="@tableId" RowIndex="@(rowIndex++)"></SimpleOperationsTableRow>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    [Parameter]
+    public IEnumerable<OperationDto> Operations { get; set; }
+    
+    [Parameter]
+    public int TableIndex { get; set; }
+}

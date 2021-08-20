@@ -1,0 +1,67 @@
+﻿@page "/accounting-periods/{IdPeriod:int}/summary"
+@using ExpensesApp.Shared.Models.DTOs
+@using ExpensesApp.Client.HttpUtils
+@using ExpensesApp.Shared.Constants
+
+@inject PublicHttpClient httpClient
+
+<div class="container-md">
+    <h3>Accounting Period Summary</h3>
+
+    @if (summary != null) {
+        <table class="table table-bordered border-secondary table-striped fs-5">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Owner</th>
+                    <th>Sum</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @{
+                    @foreach (AccountingSummaryDto.Row row in summary.Rows) {
+                        var tableCollapseId = $"table-{tableIndex}";
+
+                        <tr class="bg-light" data-bs-toggle="collapse" role="button" href="#@tableCollapseId" aria-expanded="false" aria-controls="collapseExample">
+                            <td>@row.Type.Type</td>
+                            <td>@row.Owner.Owner</td>
+                            <td>@row.Sum</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="p-0">
+                                <div class="collapse px-2" id="@tableCollapseId">
+                                    <SimpleOperationsTable Operations="@row.Operations" TableIndex="@tableIndex"></SimpleOperationsTable>
+                                </div>
+                            </td>
+
+                        </tr>
+                        
+                        tableIndex++;
+                    }
+                }
+            </tbody>
+        </table>
+    }
+    else {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int IdPeriod { get; set; }
+
+    private AccountingSummaryDto summary;
+    private int tableIndex = 0;
+
+    protected override async Task OnInitializedAsync() {
+        summary = await httpClient.Client.GetFromJsonAsync<AccountingSummaryDto>(Paths.Api.AccountingPeriodSummary(IdPeriod));
+    }
+
+}
