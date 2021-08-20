@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using ExpensesApp.Server.Data.UnitOfWork;
+using ExpensesApp.Shared.AutoMapperExtensions;
 using ExpensesApp.Shared.Constants;
+using ExpensesApp.Shared.Models;
 using ExpensesApp.Shared.Models.DTOs;
 using ExpensesApp.Shared.Models.UtilityModels;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +23,15 @@ namespace ExpensesApp.Server.Controllers
             this.mapper = mapper;
         }
 
-
+        [HttpGet]
+        public async Task<IActionResult> GetAccountingPeriods() {
+            IReadOnlyCollection<AccountingPeriod> periods = await unitOfWork.AccountPeriods.GetAllAsync();
+            
+            ICollection<AccountingPeriodDto> periodDtos = mapper.MapAll<AccountingPeriodDto>(periods);
+            return Ok(periodDtos);
+        }
+        
+        
         [HttpGet("{idPeriod:int}/summary")]
         public async Task<IActionResult> GetAccountingPeriodSummary([FromRoute] int idPeriod) {
             AccountingSummary summary = await unitOfWork.AccountPeriods.GetSummaryForPeriodAsync(idPeriod);
