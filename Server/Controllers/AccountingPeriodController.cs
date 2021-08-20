@@ -41,6 +41,20 @@ namespace ExpensesApp.Server.Controllers
             var summaryDto = mapper.Map<AccountingSummaryDto>(summary);
 
             return Ok(summaryDto);
-        } 
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> PostAccountingPeriod([FromBody] AccountingPeriodDto periodDto) {
+            if (periodDto == null)
+                return BadRequest();
+
+            var period = mapper.Map<AccountingPeriod>(periodDto);
+            await unitOfWork.AccountPeriods.AddAsync(period);
+            await unitOfWork.CompleteAsync();
+
+            return Ok();
+        }
+        
     }
 }

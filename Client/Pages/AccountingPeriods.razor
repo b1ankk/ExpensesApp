@@ -6,47 +6,83 @@
 @inject PublicHttpClient httpClient
 @inject NavigationManager navigationManager
 
-<div class="container-md">
-    <h3>AccountingPeriods</h3>
+<div class="container-md d-grid gap-3">
+    <div class="row">
+        <h3>AccountingPeriods</h3>
+    </div>
 
-    @if (accountingPeriods != null) {
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Creation Date</th>
-                    <th>Start Date Inclusive</th>
-                    <th>End Date Exclusive</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (AccountingPeriodDto period in accountingPeriods) {
-                    <tr class="align-middle" style="cursor: pointer;" @onclick="() => NavigateToSummary(period)">
-                        <td>@period.CreationDateTime.ToString("g")</td>
-                        <td>@period.StartDateInclusive.ToShortDateString()</td>
-                        <td>@period.EndDateExclusive.ToShortDateString()</td>
-                        <td>
-                            <div style="text-align: center">
-                                <button class="btn btn-outline-primary">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                                <button class="btn btn-outline-danger">
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
-                            </div>
-                        </td>
+    <div class="row">
+        <button class="btn btn-primary col-2" data-bs-toggle="modal" data-bs-target="#@CreateAccountingPeriodModalId">
+            <i class="bi bi-plus-lg px-1"></i>
+            Add Period
+        </button>
+
+        <div>
+            <CreateAccountingPeriodModal ModalId="@CreateAccountingPeriodModalId" OnValidSubmit="PostCreatedPeriodAndReloadAsync"/>
+        </div>
+    </div>
+
+    <div class="row">
+        @if (accountingPeriods != null) {
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Creation Date</th>
+                        <th>Start Date Inclusive</th>
+                        <th>End Date Exclusive</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    }
-
+                </thead>
+                <tbody>
+                    @foreach (AccountingPeriodDto period in accountingPeriods) {
+                        <tr class="align-middle" style="cursor: pointer;" @onclick="() => NavigateToSummary(period)">
+                            <td>@period.CreationDateTime.ToString("g")</td>
+                            <td>@period.StartDateInclusive.ToShortDateString()</td>
+                            <td>@period.EndDateExclusive.ToShortDateString()</td>
+                            <td>
+                                <div style="text-align: center">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else {
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        }
+    </div>
 </div>
 
 @code {
+    private const string CreateAccountingPeriodModalId = "createPeriodModal";
+
     private IReadOnlyCollection<AccountingPeriodDto> accountingPeriods;
 
+
     protected override async Task OnInitializedAsync() {
+        await LoadAccountingPeriodsAsync();
+    }
+
+    private async Task PostCreatedPeriodAndReloadAsync(AccountingPeriodDto accountingPeriodDto) {
+        accountingPeriodDto.CreationDateTime = DateTime.Now;
+        await PostPeriodAsync(accountingPeriodDto);
+        await LoadAccountingPeriodsAsync();
+    }
+
+    private async Task PostPeriodAsync(AccountingPeriodDto periodDto) {
+        await httpClient.Client.PostAsJsonAsync(Paths.Api.AccountingPeriods, periodDto);
+    }
+
+    private async Task LoadAccountingPeriodsAsync() {
         accountingPeriods = await httpClient
             .Client.GetFromJsonAsync<IReadOnlyCollection<AccountingPeriodDto>>(Paths.Api.AccountingPeriods);
     }
@@ -54,4 +90,5 @@
     private void NavigateToSummary(AccountingPeriodDto period) {
         navigationManager.NavigateTo(Paths.Page.AccountingPeriodSummary(period.IdAccountingPeriod));
     }
+
 }
