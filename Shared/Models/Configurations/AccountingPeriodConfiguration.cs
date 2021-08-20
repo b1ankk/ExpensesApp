@@ -8,7 +8,7 @@ namespace ExpensesApp.Shared.Models.Configurations
         public void Configure(EntityTypeBuilder<AccountingPeriod> period) {
             period.HasKey(x => x.IdAccountingPeriod);
 
-            period.Property(x => x.CreationDate)
+            period.Property(x => x.CreationDateTime)
                   .IsRequired();
 
             period.Property(x => x.StartDateInclusive)

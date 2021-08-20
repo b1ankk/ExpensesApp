@@ -22,7 +22,7 @@
             <tbody>
                 @foreach (AccountingPeriodDto period in accountingPeriods) {
                     <tr class="align-middle" style="cursor: pointer;" @onclick="() => NavigateToSummary(period)">
-                        <td>@period.CreationDate.ToString("g")</td>
+                        <td>@period.CreationDateTime.ToString("g")</td>
                         <td>@period.StartDateInclusive.ToShortDateString()</td>
                         <td>@period.EndDateExclusive.ToShortDateString()</td>
                         <td>
