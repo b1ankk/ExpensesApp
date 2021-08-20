@@ -55,6 +55,18 @@ namespace ExpensesApp.Server.Controllers
 
             return Ok();
         }
-        
+
+
+        [HttpDelete("{idPeriod:int}")]
+        public async Task<IActionResult> DeleteAccountingPeriod([FromRoute] int idPeriod) {
+            AccountingPeriod period = await unitOfWork.AccountPeriods.GetAsync(idPeriod);
+            if (period == null)
+                return NotFound();
+            
+            unitOfWork.AccountPeriods.Remove(period);
+            await unitOfWork.CompleteAsync();
+            
+            return Ok();
+        }
     }
 }

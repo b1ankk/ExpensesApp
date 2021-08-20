@@ -18,7 +18,7 @@
         </button>
 
         <div>
-            <CreateAccountingPeriodModal ModalId="@CreateAccountingPeriodModalId" OnValidSubmit="PostCreatedPeriodAndReloadAsync"/>
+            <CreateAccountingPeriodModal ModalId="@CreateAccountingPeriodModalId" OnValidSubmit="PostPeriodAndReloadAsync"/>
         </div>
     </div>
 
@@ -35,21 +35,22 @@
                 </thead>
                 <tbody>
                     @foreach (AccountingPeriodDto period in accountingPeriods) {
-                        <tr class="align-middle" style="cursor: pointer;" @onclick="() => NavigateToSummary(period)">
-                            <td>@period.CreationDateTime.ToString("g")</td>
-                            <td>@period.StartDateInclusive.ToShortDateString()</td>
-                            <td>@period.EndDateExclusive.ToShortDateString()</td>
+                        <tr class="align-middle">
+                            <td class="cursor-pointer" @onclick="() => NavigateToSummary(period)">@period.CreationDateTime.ToString("g")</td>
+                            <td class="cursor-pointer" @onclick="() => NavigateToSummary(period)">@period.StartDateInclusive.ToShortDateString()</td>
+                            <td class="cursor-pointer" @onclick="() => NavigateToSummary(period)">@period.EndDateExclusive.ToShortDateString()</td>
                             <td>
-                                <div style="text-align: center">
+                                <div class="text-center">
                                     <button class="btn btn-outline-primary">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="btn btn-outline-danger">
+                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#@DeleteAccountingPeriodModalId">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
+                        <DeletionConfirmationModal ModalId="@DeleteAccountingPeriodModalId" OnConfirmation="() => DeletePeriodAndReloadAsync(period)"/>
                     }
                 </tbody>
             </table>
@@ -64,6 +65,7 @@
 
 @code {
     private const string CreateAccountingPeriodModalId = "createPeriodModal";
+    private const string DeleteAccountingPeriodModalId = "deletePeriodModal";
 
     private IReadOnlyCollection<AccountingPeriodDto> accountingPeriods;
 
@@ -72,7 +74,12 @@
         await LoadAccountingPeriodsAsync();
     }
 
-    private async Task PostCreatedPeriodAndReloadAsync(AccountingPeriodDto accountingPeriodDto) {
+    private async Task LoadAccountingPeriodsAsync() {
+        accountingPeriods = await httpClient
+            .Client.GetFromJsonAsync<IReadOnlyCollection<AccountingPeriodDto>>(Paths.Api.AccountingPeriods);
+    }
+
+    private async Task PostPeriodAndReloadAsync(AccountingPeriodDto accountingPeriodDto) {
         accountingPeriodDto.CreationDateTime = DateTime.Now;
         await PostPeriodAsync(accountingPeriodDto);
         await LoadAccountingPeriodsAsync();
@@ -82,9 +89,13 @@
         await httpClient.Client.PostAsJsonAsync(Paths.Api.AccountingPeriods, periodDto);
     }
 
-    private async Task LoadAccountingPeriodsAsync() {
-        accountingPeriods = await httpClient
-            .Client.GetFromJsonAsync<IReadOnlyCollection<AccountingPeriodDto>>(Paths.Api.AccountingPeriods);
+    private async Task DeletePeriodAndReloadAsync(AccountingPeriodDto period) {
+        await DeletePeriodAsync(period);
+        await LoadAccountingPeriodsAsync();
+    }
+
+    private async Task DeletePeriodAsync(AccountingPeriodDto period) {
+        await httpClient.Client.DeleteAsync(Paths.Api.AccountingPeriod(period.IdAccountingPeriod));
     }
 
     private void NavigateToSummary(AccountingPeriodDto period) {

@@ -17,8 +17,12 @@
                 return $"{Operations}/{id}";
             }
 
+            public static string AccountingPeriod(int idPeriod) {
+                return $"{AccountingPeriods}/{idPeriod}";
+            }
+            
             public static string AccountingPeriodSummary(int idPeriod) {
-                return $"{AccountingPeriods}/{idPeriod}/summary";
+                return $"{AccountingPeriod(idPeriod)}/summary";
             }
         }
 
