@@ -1,0 +1,57 @@
+﻿@page "/accounting-periods"
+@using ExpensesApp.Shared.Models.DTOs
+@using ExpensesApp.Client.HttpUtils
+@using ExpensesApp.Shared.Constants
+
+@inject PublicHttpClient httpClient
+@inject NavigationManager navigationManager
+
+<div class="container-md">
+    <h3>AccountingPeriods</h3>
+
+    @if (accountingPeriods != null) {
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Creation Date</th>
+                    <th>Start Date Inclusive</th>
+                    <th>End Date Exclusive</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (AccountingPeriodDto period in accountingPeriods) {
+                    <tr class="align-middle" style="cursor: pointer;" @onclick="() => NavigateToSummary(period)">
+                        <td>@period.CreationDate.ToString("g")</td>
+                        <td>@period.StartDateInclusive.ToShortDateString()</td>
+                        <td>@period.EndDateExclusive.ToShortDateString()</td>
+                        <td>
+                            <div style="text-align: center">
+                                <button class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-outline-danger">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</div>
+
+@code {
+    private IReadOnlyCollection<AccountingPeriodDto> accountingPeriods;
+
+    protected override async Task OnInitializedAsync() {
+        accountingPeriods = await httpClient
+            .Client.GetFromJsonAsync<IReadOnlyCollection<AccountingPeriodDto>>(Paths.Api.AccountingPeriods);
+    }
+
+    private void NavigateToSummary(AccountingPeriodDto period) {
+        navigationManager.NavigateTo(Paths.Page.AccountingPeriodSummary(period.IdAccountingPeriod));
+    }
+}
