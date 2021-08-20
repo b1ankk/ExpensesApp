@@ -1,13 +1,13 @@
 ﻿@using ExpensesApp.Shared.Models.DTOs
 
 
-<div class="modal fade" id="createPeriodModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="createPeriodLabel" aria-hidden="true">
+<div class="modal fade" id="@ModalId" data-bs-backdrop="static" tabindex="-1" aria-labelledby="createPeriodLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <EditForm Model="accountingPeriod" OnValidSubmit="CallOnValidSubmit" class="container-fluid">
                 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createPeriodLabel">Create Accounting Period</h5>
+                    <h5 class="modal-title" id="@ModalId-Label">Create Accounting Period</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
