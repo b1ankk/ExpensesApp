@@ -12,7 +12,8 @@ namespace ExpensesApp.Shared.AutoMapperProfiles
             CreateMap<OperationType, OperationTypeDto>().ReverseMap();
             CreateMap<OperationOwner, OperationOwnerDto>().ReverseMap();
             CreateMap<Operation, VerboseOperationDto>();
-            
+
+            CreateMap<AccountingPeriod, AccountingPeriodDto>().ReverseMap();
             CreateMap<AccountingSummary, AccountingSummaryDto>().ReverseMap();
             CreateMap<AccountingSummary.Row, AccountingSummaryDto.Row>().ReverseMap();
         }
