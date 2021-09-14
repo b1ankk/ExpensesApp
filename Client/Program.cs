@@ -17,7 +17,8 @@ namespace ExpensesApp.Client
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddAutoMapper(typeof(ProfileImpl));
-
+            builder.Services.AddAntDesign();
+            
             builder.Services.AddHttpClient(
                        "ExpensesApp.ServerAPI",
                        client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
