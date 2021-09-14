@@ -2,46 +2,86 @@
 @using ExpensesApp.Shared.Models.DTOs
 @using ExpensesApp.Client.HttpUtils
 @using ExpensesApp.Shared.Constants
+@using AntDesign
 
 @inject PublicHttpClient httpClient
+
 
 <div class="container-md">
     <h3>Accounting Period Summary</h3>
 
     @if (summary != null) {
-        <table class="table table-bordered table-striped fs-5">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Owner</th>
-                    <th>Sum</th>
-                </tr>
-            </thead>
+        <Table DataSource="summary.Rows" Bordered Size="TableSize.Middle">
+            <RowTemplate>
+                <Column TData="string" DataIndex="Type.Type"
+                        Title="Type"
+                        Filterable Sortable
+                        Width="200" 
+                />
 
-            <tbody>
-                @{
-                    @foreach (AccountingSummaryDto.Row row in summary.Rows) {
-                        var tableCollapseId = $"table-{tableIndex}";
+                <Column TData="string" DataIndex="Owner.Owner" 
+                        Title="Owner"
+                        Filterable Sortable
+                        Width="200"
+                />
 
-                        <tr class="bg-light" data-bs-toggle="collapse" role="button" href="#@tableCollapseId" aria-expanded="false" aria-controls="collapseExample">
-                            <td>@row.Type.Type</td>
-                            <td>@row.Owner.Owner</td>
-                            <td>@row.Sum</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" class="p-0">
-                                <div class="collapse px-2" id="@tableCollapseId">
-                                    <SimpleOperationsTable Operations="@row.Operations" TableIndex="@tableIndex"></SimpleOperationsTable>
-                                </div>
-                            </td>
-
-                        </tr>
-                        
-                        tableIndex++;
-                    }
-                }
-            </tbody>
-        </table>
+                <Column @bind-Field="@(context.Sum)" 
+                        Title="Sum" 
+                        Filterable Sortable
+                />
+                
+                <SummaryRow>
+                    <SummaryCell/>
+                    <SummaryCell ColSpan="2">
+                        <div class="text-end">Sum:</div>
+                    </SummaryCell>
+                    <SummaryCell>
+                        <Text Strong>@summary.Rows.Sum(x => x.Sum)</Text>
+                    </SummaryCell>
+                </SummaryRow>
+            </RowTemplate>
+            
+            <ExpandTemplate Context="row">
+                <Table DataSource="row.Data.Operations" HidePagination Bordered Size="TableSize.Small" ScrollX="1200px">
+                    <RowTemplate>
+                        <Column @bind-Field="@context.OperationDate" 
+                                Title="Operation Date" 
+                                Filterable Sortable
+                                Width="200px">
+                            @context.OperationDate.ToString("d")
+                        </Column>
+                        <Column @bind-Field="@context.TransactionDate"
+                                Title="Transaction Date" 
+                                Filterable Sortable
+                                Width="200px">
+                            @context.TransactionDate.ToString("d")
+                        </Column>
+                        <Column @bind-Field="@context.TransactionType" 
+                                Title="Transaction Type"
+                                Filterable Sortable
+                                Width="250px"
+                        />
+                        <Column @bind-Field="@context.Amount" 
+                                Title="Amount" 
+                                Filterable Sortable
+                                Width="150px"
+                        />
+                        <Column @bind-Field="@context.Currency" 
+                                Title="Currency" 
+                                Filterable Sortable
+                                Width="150px"
+                        />
+                        <Column @bind-Field="@context.AfterOperationBalance" 
+                                Title="Balance After Operation"
+                                Filterable Sortable
+                        />
+                    </RowTemplate>
+                    <ExpandTemplate>
+                        <pre class="m-0">@context.Data.Description.Trim()</pre>
+                    </ExpandTemplate>
+                </Table>
+            </ExpandTemplate>
+        </Table>
     }
     else {
         <div class="spinner-border" role="status">
