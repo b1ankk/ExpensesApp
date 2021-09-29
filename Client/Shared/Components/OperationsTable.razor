@@ -23,7 +23,7 @@
             @foreach (VerboseOperationDto operation in Operations) {
                 var collapseId = $"desc{i++}";
 
-                <tr class="align-middle" data-bs-toggle="collapse" role="button" href="#@collapseId" aria-expanded="false" aria-controls="collapseExample">
+                <tr id="@($"operation-{operation.IdOperation}")" class="align-middle" data-bs-toggle="collapse" role="button" href="#@collapseId" aria-expanded="false" aria-controls="collapseExample">
                     <td>@operation.OperationType?.Type</td>
                     <td>@operation.OperationOwner?.Owner</td>
                     <td>@operation.OperationDate.ToString("d")</td>

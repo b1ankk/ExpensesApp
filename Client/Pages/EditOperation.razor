@@ -44,7 +44,7 @@
     }
 
     private void NavigateBackToOperations() {
-        navigationManager.NavigateTo(Paths.Page.Operations);
+        navigationManager.NavigateTo(Paths.Page.Operations + $"#operation-{IdOperation}");
     }
 
     private async Task PutOperation() {
