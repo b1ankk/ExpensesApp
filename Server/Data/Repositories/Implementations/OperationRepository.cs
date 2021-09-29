@@ -62,5 +62,11 @@ namespace ExpensesApp.Server.Data.Repositories.Implementations
                        SortOrderKey<Operation>.DescForKey(x => x.IdOperation)
                    );
         }
+
+        public async Task<bool> AnyWithoutOwnerOrTypeAsync() {
+            return await DbContextImpl
+                         .Operations
+                         .AnyAsync(x => x.IdOperationOwner == null || x.IdOperationType == null);
+        }
     }
 }

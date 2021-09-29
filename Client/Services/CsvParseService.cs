@@ -10,7 +10,7 @@ namespace ExpensesApp.Client.Services
 {
     public class CsvParseService : ICsvParseService
     {
-        public async Task<IEnumerable<OperationDto>> ParseOperationDtosFromStreamAsync(Stream fs) {
+        public async Task<IReadOnlyCollection<OperationDto>> ParseOperationDtosFromStreamAsync(Stream fs) {
             var operations = new List<OperationDto>();
             using var reader = new StreamReader(fs);
 

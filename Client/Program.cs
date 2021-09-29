@@ -37,6 +37,7 @@ namespace ExpensesApp.Client
             builder.Services.AddApiAuthorization();
 
             builder.Services.AddTransient<ICsvParseService, CsvParseService>();
+            builder.Services.AddTransient<IXmlParseService, XmlParseService>();
 
             await builder.Build().RunAsync();
         }

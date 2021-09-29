@@ -5,22 +5,43 @@
 @using ExpensesApp.Shared.Constants
 @using System.IO
 
-
 @inject PublicHttpClient httpClient
 @inject NavigationManager navigationManager
 @inject ICsvParseService csvParseService
+@inject IXmlParseService xmlParseService
 
 
 <div class="container-md">
     <h3>Operations</h3>
 
-    <div style="padding-top: 10px; padding-bottom: 10px; ">
-        <div style="padding: 5px">
-            <InputFile OnChange="LoadOperationsFromFile"></InputFile>
-        </div>
-        <div style="padding: 5px">
-            <button class="btn btn-primary" @onclick="PostLoadedOperationsAndRefreshView">Add From File</button>
-        </div>
+    <div class="pt-1 pb-3">
+        <span style="padding: 5px">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#file-load-modal">Add From File</button>
+
+            <div class="modal fade" id="file-load-modal" tabindex="-1" aria-labelledby="" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Select a file type</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container-fluid justify-content-evenly d-flex">
+                                <button class="btn btn-primary" @onclick="LoadOperationsFromCsvPostAndReload" data-bs-dismiss="modal">
+                                    <span class="fs-1">CSV</span>
+                                </button>
+                                <button class="btn btn-primary" @onclick="LoadOperationsFromXmlPostAndReload" data-bs-dismiss="modal">
+                                    <span class="fs-1">XML</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>
+        <span style="padding: 5px">
+            <InputFile OnChange="RefreshInputFilePath"></InputFile>
+        </span>
     </div>
 
     @if (operations == null) {
@@ -36,20 +57,39 @@
 
 @code {
     private IReadOnlyCollection<VerboseOperationDto> operations;
-    private IEnumerable<OperationDto> loadedOperations;
     private IReadOnlyCollection<OperationTypeDto> operationTypes;
 
+    private IBrowserFile inputFile;
+    
     protected override async Task OnInitializedAsync() {
         await LoadAndDisplayOperationsFromServer();
         operationTypes = await GetOperationTypes();
     }
 
-    private async Task PostLoadedOperationsAndRefreshView() {
-        if (loadedOperations != null) {
-            await httpClient.Client.PostAsJsonAsync(Paths.Api.Operations, loadedOperations);
-            await LoadAndDisplayOperationsFromServer();
-            loadedOperations = null;
-        }
+    private async Task LoadOperationsFromCsvPostAndReload() {
+        IReadOnlyCollection<OperationDto> loadedOperations = await LoadOperationsFromFileAsync(csvParseService);
+        await PostLoadedOperationsAndRefreshView(loadedOperations);
+    }
+    
+    private async Task LoadOperationsFromXmlPostAndReload() {
+        IReadOnlyCollection<OperationDto> loadedOperations = await LoadOperationsFromFileAsync(xmlParseService);
+        await PostLoadedOperationsAndRefreshView(loadedOperations);
+    }
+
+    private async Task<IReadOnlyCollection<OperationDto>> LoadOperationsFromFileAsync(IParseService parseService) {
+        if (inputFile == null)
+            return Array.Empty<OperationDto>();
+        
+        await using Stream stream = inputFile.OpenReadStream();
+        return await parseService.ParseOperationDtosFromStreamAsync(stream);
+    }
+    
+    private async Task PostLoadedOperationsAndRefreshView(IReadOnlyCollection<OperationDto> loadedOperations) {
+        if (loadedOperations == null || loadedOperations.Count == 0)
+            return;
+        
+        await httpClient.Client.PostAsJsonAsync(Paths.Api.Operations, loadedOperations);
+        await LoadAndDisplayOperationsFromServer();
     }
 
     private async Task LoadAndDisplayOperationsFromServer() {
@@ -64,12 +104,8 @@
         return await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<OperationTypeDto>>(Paths.Api.OperationTypes);
     }
 
-
-    private async Task LoadOperationsFromFile(InputFileChangeEventArgs e) {
-        IBrowserFile file = e.File;
-        await using Stream stream = file.OpenReadStream();
-
-        loadedOperations = await csvParseService.ParseOperationDtosFromStreamAsync(stream);
+    private void RefreshInputFilePath(InputFileChangeEventArgs e) {
+        inputFile = e.File;
     }
 
 }
