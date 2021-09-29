@@ -29,16 +29,6 @@
                         Title="Sum" 
                         Filterable Sortable
                 />
-                
-                <SummaryRow>
-                    <SummaryCell/>
-                    <SummaryCell ColSpan="2">
-                        <div class="text-end">Sum:</div>
-                    </SummaryCell>
-                    <SummaryCell>
-                        <Text Strong>@summary.Rows.Sum(x => x.Sum)</Text>
-                    </SummaryCell>
-                </SummaryRow>
             </RowTemplate>
             
             <ExpandTemplate Context="row">
@@ -82,6 +72,33 @@
                 </Table>
             </ExpandTemplate>
         </Table>
+        
+        <div>
+            <h3>Summary</h3>
+            
+            <div class="d-flex">
+                <table class="table table-bordered border-light fs-5">
+                    <tbody>
+                        <tr class="table-danger">
+                            <th>Expenses</th>
+                            <td class="text-end">@summary.Rows.Where(x => x.Sum < 0).Sum(x => x.Sum)</td>
+                            <td class="w-100"></td>
+                        </tr>
+                        <tr class="table-success">
+                            <th>Income</th>
+                            <td class="text-end">@summary.Rows.Where(x => x.Sum > 0).Sum(x => x.Sum)</td>
+                            <td class="w-100"></td>
+                        </tr>
+                        <tr class="table-primary">
+                            <th>Balance</th>
+                            <td class="text-end">@summary.Rows.Sum(x => x.Sum)</td>
+                            <td class="w-100"></td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
     }
     else {
         <div class="spinner-border" role="status">
