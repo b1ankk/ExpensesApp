@@ -115,7 +115,6 @@
     public int IdPeriod { get; set; }
 
     private AccountingSummaryDto summary;
-    private int tableIndex = 0;
 
     protected override async Task OnInitializedAsync() {
         summary = await httpClient.Client.GetFromJsonAsync<AccountingSummaryDto>(Paths.Api.AccountingPeriodSummary(IdPeriod));
