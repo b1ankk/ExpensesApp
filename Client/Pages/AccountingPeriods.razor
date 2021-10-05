@@ -44,13 +44,13 @@
                                     <button class="btn btn-outline-primary">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#@DeleteAccountingPeriodModalId">
+                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="@($"#{DeleteAccountingPeriodModalId}-{period.IdAccountingPeriod}")">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                        <DeletionConfirmationModal ModalId="@DeleteAccountingPeriodModalId" OnConfirmation="() => DeletePeriodAndReloadAsync(period)"/>
+                        <DeletionConfirmationModal ModalId="@($"{DeleteAccountingPeriodModalId}-{period.IdAccountingPeriod}")" OnConfirmation="() => DeletePeriodAndReloadAsync(period)"/>
                     }
                 </tbody>
             </table>
