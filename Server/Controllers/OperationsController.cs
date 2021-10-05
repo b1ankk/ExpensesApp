@@ -66,5 +66,19 @@ namespace ExpensesApp.Server.Controllers
 
             return Ok();
         }
+
+
+        [HttpDelete("{idOperation:int}")]
+        public async Task<IActionResult> DeleteOperation([FromRoute] int idOperation) {
+            Operation operation = await unitOfWork.Operations.GetAsync(idOperation);
+
+            if (operation == null)
+                return NotFound();
+
+            unitOfWork.Operations.Remove(operation);
+            await unitOfWork.CompleteAsync();
+
+            return Ok();
+        }
     }
 }

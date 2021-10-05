@@ -5,56 +5,63 @@
 @if (Operations != null) {
     <table class="table table-bordered table-hover table-responsive">
         <thead>
-        <tr>
-            <th>Operation Type</th>
-            <th>Operation Owner</th>
-            <th>Operation Date</th>
-            <th>Transaction Date</th>
-            <th>Transaction Type</th>
-            <th>Amount</th>
-            <th>Currency</th>
-            <th>Balance After Operation</th>
-            <th></th>
-        </tr>
+            <tr>
+                <th></th>
+                <th>Operation Type</th>
+                <th>Operation Owner</th>
+                <th>Operation Date</th>
+                <th>Transaction Date</th>
+                <th>Transaction Type</th>
+                <th>Amount</th>
+                <th>Currency</th>
+                <th>Balance After Operation</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
-        @{
-            var i = 0;
-            @foreach (VerboseOperationDto operation in Operations) {
-                var collapseId = $"desc{i++}";
+            @{
+                var i = 0;
+                @foreach (VerboseOperationDto operation in Operations) {
+                    var collapseId = $"desc{i++}";
 
-                <tr id="@($"operation-{operation.IdOperation}")" class="align-middle" data-bs-toggle="collapse" role="button" href="#@collapseId" aria-expanded="false" aria-controls="collapseExample">
-                    <td>@operation.OperationType?.Type</td>
-                    <td>@operation.OperationOwner?.Owner</td>
-                    <td>@operation.OperationDate.ToString("d")</td>
-                    <td>@operation.TransactionDate.ToString("d")</td>
-                    <td>@operation.TransactionType</td>
-                    <td>@operation.Amount</td>
-                    <td>@operation.Currency</td>
-                    <td>@operation.AfterOperationBalance</td>
-                    <td>
-                        <div style="text-align: center">
-                            <button class="btn btn-outline-primary" @onclick="@(() => NavigateToEditPage(operation))">
-                                <i class="bi bi-pencil-square"></i>
+                    <tr id="@($"operation-{operation.IdOperation}")" class="align-middle">
+                        <td>
+                            <button class="btn btn-outline-dark" data-bs-toggle="collapse" role="button" href="#@collapseId" aria-expanded="false" aria-controls="collapseExample">
+                                <i class="bi bi-eye-fill"></i>
                             </button>
-                            <button class="btn btn-outline-danger">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="8" class="p-0">
-                        <div class="collapse px-2" id="@collapseId">
-                            <div class="py-2">
-                                <div class="fw-bold">Description</div>
-                                <pre class="m-0">@operation.Description</pre>
+                        </td>
+                        <td>@operation.OperationType?.Type</td>
+                        <td>@operation.OperationOwner?.Owner</td>
+                        <td>@operation.OperationDate.ToString("d")</td>
+                        <td>@operation.TransactionDate.ToString("d")</td>
+                        <td>@operation.TransactionType</td>
+                        <td>@operation.Amount</td>
+                        <td>@operation.Currency</td>
+                        <td>@operation.AfterOperationBalance</td>
+                        <td>
+                            <div style="text-align: center">
+                                <button class="btn btn-outline-primary" @onclick="@(() => NavigateToEditPage(operation))">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="@($"#delete-entry-modal-{operation.IdOperation}")">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
                             </div>
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" class="p-0">
+                            <div class="collapse px-2" id="@collapseId">
+                                <div class="py-2">
+                                    <div class="fw-bold">Description</div>
+                                    <pre class="m-0">@operation.Description</pre>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <DeletionConfirmationModal ModalId="@($"delete-entry-modal-{operation.IdOperation}")" OnConfirmation="@(async () => await OnDelete.InvokeAsync(operation))"/>
+                }
             }
-        }
         </tbody>
     </table>
 }
@@ -65,6 +72,9 @@
 
     [Parameter]
     public IReadOnlyCollection<VerboseOperationDto> Operations { get; set; }
+
+    [Parameter]
+    public EventCallback<VerboseOperationDto> OnDelete { get; set; }
 
     void NavigateToEditPage(VerboseOperationDto operation) {
         navigationManager.NavigateTo($"{Paths.Page.EditOperation}/{operation.IdOperation}");

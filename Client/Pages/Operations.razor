@@ -51,20 +51,17 @@
         </div>
     }
     else {
-        <OperationsTable Operations="@operations"></OperationsTable>
+        <OperationsTable Operations="@operations" OnDelete="@(async operation => await DeleteOperationAndRefreshView(operation))"/>
     }
 </div>
 
 
 @code {
     private IReadOnlyCollection<VerboseOperationDto> operations;
-    private IReadOnlyCollection<OperationTypeDto> operationTypes;
-
     private IBrowserFile inputFile;
     
     protected override async Task OnInitializedAsync() {
         await LoadAndDisplayOperationsFromServer();
-        operationTypes = await GetOperationTypes();
     }
 
     private async Task LoadOperationsFromCsvPostAndReload() {
@@ -93,16 +90,17 @@
         await LoadAndDisplayOperationsFromServer();
     }
 
+    private async Task DeleteOperationAndRefreshView(VerboseOperationDto operation) {
+        await httpClient.Client.DeleteAsync($"{Paths.Api.Operations}/{operation.IdOperation}");
+        await LoadAndDisplayOperationsFromServer();
+    }
+
     private async Task LoadAndDisplayOperationsFromServer() {
         operations = await GetVerboseOperations();
     }
 
     private async Task<IReadOnlyCollection<VerboseOperationDto>> GetVerboseOperations() {
         return await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<VerboseOperationDto>>(Paths.Api.VerboseOperations);
-    }
-
-    private async Task<IReadOnlyCollection<OperationTypeDto>> GetOperationTypes() {
-        return await httpClient.Client.GetFromJsonAsync<IReadOnlyCollection<OperationTypeDto>>(Paths.Api.OperationTypes);
     }
 
     private void RefreshInputFilePath(InputFileChangeEventArgs e) {
