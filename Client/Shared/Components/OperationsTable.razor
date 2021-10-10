@@ -24,7 +24,7 @@
                 @foreach (VerboseOperationDto operation in Operations) {
                     var collapseId = $"desc{i++}";
 
-                    <tr id="@($"operation-{operation.IdOperation}")" class="align-middle">
+                    <tr id="@($"operation-{operation.IdOperation}")" class="align-middle @(SetRedStyleIfOwnerOrTypeIsNull(operation))">
                         <td>
                             <button class="btn btn-outline-dark" data-bs-toggle="collapse" role="button" href="#@collapseId" aria-expanded="false" aria-controls="collapseExample">
                                 <i class="bi bi-eye-fill"></i>
@@ -80,4 +80,7 @@
         navigationManager.NavigateTo($"{Paths.Page.EditOperation}/{operation.IdOperation}");
     }
 
+    private string SetRedStyleIfOwnerOrTypeIsNull(VerboseOperationDto operation) {
+        return operation.OperationOwner == null || operation.OperationType == null ? "table-danger" : "";
+    }
 }
