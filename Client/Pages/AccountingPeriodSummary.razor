@@ -77,25 +77,48 @@
             <h3>Summary</h3>
             
             <div class="d-flex">
-                <table class="table table-bordered border-light fs-5">
-                    <tbody>
-                        <tr class="table-danger">
-                            <th>Expenses</th>
-                            <td class="text-end">@summary.Rows.Where(x => x.Sum < 0).Sum(x => x.Sum)</td>
-                            <td class="w-100"></td>
-                        </tr>
-                        <tr class="table-success">
-                            <th>Income</th>
-                            <td class="text-end">@summary.Rows.Where(x => x.Sum > 0).Sum(x => x.Sum)</td>
-                            <td class="w-100"></td>
-                        </tr>
-                        <tr class="table-primary">
-                            <th>Balance</th>
-                            <td class="text-end">@summary.Rows.Sum(x => x.Sum)</td>
-                            <td class="w-100"></td>
-                        </tr>
+                <table class="owner-summary-table table table-bordered border-light fs-5">
+                    
+                    @{
+                        var ownerSummaries = GetRowsGroupedByOwner();
                         
-                    </tbody>
+                        <thead class="table">
+                            <tr>
+                                <th></th>
+                                <th class="text-center">General</th>
+                                @foreach (var ownerRows in ownerSummaries) {
+                                    <th class="text-center">@ownerRows.Key</th>
+                                }
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-danger">
+                                <th>Expenses</th>
+                                <td class="text-end">@GetSumOfExpenses(summary.Rows)</td>
+                                @foreach (var ownerRows in ownerSummaries) {
+                                    <td class="text-end">@GetSumOfExpenses(ownerRows)</td>
+                                }
+                                <td class="w-100"></td>
+                            </tr>
+                            <tr class="table-success">
+                                <th>Income</th>
+                                <td class="text-end">@GetSumOfIncomes(summary.Rows)</td>
+                                @foreach (var ownerRows in ownerSummaries) {
+                                    <td class="text-end">@GetSumOfIncomes(ownerRows)</td>
+                                }
+                                <td class="w-100"></td>
+                            </tr>
+                            <tr class="table-primary text-end">
+                                <th class="text-start">Balance</th>
+                                <td class="text-end">@GetBalance(summary.Rows)</td>
+                                @foreach (var ownerRows in ownerSummaries) {
+                                    <td class="text-end">@GetBalance(ownerRows)</td>
+                                }
+                                <td class="w-100"></td>
+                            </tr>
+                        </tbody>
+                    }
                 </table>
             </div>
         </div>
@@ -120,4 +143,23 @@
         summary = await httpClient.Client.GetFromJsonAsync<AccountingSummaryDto>(Paths.Api.AccountingPeriodSummary(IdPeriod));
     }
 
+
+    private IOrderedEnumerable<IGrouping<string, AccountingSummaryDto.Row>> GetRowsGroupedByOwner() {
+        var ownerSummaries = summary.Rows
+                                    .GroupBy(x => x.Owner.Owner)
+                                    .OrderBy(x => x.Key);
+        return ownerSummaries;
+    }
+
+    private decimal GetSumOfExpenses(IEnumerable<AccountingSummaryDto.Row> rows) {
+        return rows.Where(x => x.Sum < 0).Sum(x => x.Sum);
+    }
+    
+    private decimal GetSumOfIncomes(IEnumerable<AccountingSummaryDto.Row> rows) {
+        return rows.Where(x => x.Sum > 0).Sum(x => x.Sum);
+    }
+    
+    private decimal GetBalance(IEnumerable<AccountingSummaryDto.Row> rows) {
+        return rows.Sum(x => x.Sum);
+    }
 }

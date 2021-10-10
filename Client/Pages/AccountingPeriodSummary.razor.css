@@ -1,0 +1,3 @@
+﻿.owner-summary-table :is(td, th) {
+    padding: 1rem;
+}
