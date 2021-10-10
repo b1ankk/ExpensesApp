@@ -32,7 +32,7 @@
             </RowTemplate>
             
             <ExpandTemplate Context="row">
-                <Table DataSource="row.Data.Operations" HidePagination Bordered Size="TableSize.Small" ScrollX="1200px">
+                <Table DataSource="row.Data.Operations" HidePagination PageSize="@int.MaxValue" Bordered Size="TableSize.Small" ScrollX="1200px">
                     <RowTemplate>
                         <Column @bind-Field="@context.OperationDate" 
                                 Title="Operation Date" 
