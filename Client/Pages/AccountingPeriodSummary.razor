@@ -11,6 +11,10 @@
     <h3>Accounting Period Summary</h3>
 
     @if (summary != null) {
+        <h4>
+            <pre>@summary?.AccountingPeriod?.StartDateInclusive.ToLongDateString()  -  @summary?.AccountingPeriod?.EndDateExclusive.ToLongDateString()</pre>
+        </h4>
+        
         <Table DataSource="summary.Rows" Bordered Size="TableSize.Middle" PageSize="200">
             <RowTemplate>
                 <Column TData="string" DataIndex="Type.Type"

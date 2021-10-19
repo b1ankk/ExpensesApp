@@ -4,6 +4,7 @@ namespace ExpensesApp.Shared.Models.DTOs
 {
     public class AccountingSummaryDto
     {
+        public AccountingPeriodDto AccountingPeriod { get; set; }
         public ICollection<Row> Rows { get; set; }
 
 

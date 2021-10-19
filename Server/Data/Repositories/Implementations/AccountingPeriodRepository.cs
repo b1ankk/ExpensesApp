@@ -44,7 +44,7 @@ namespace ExpensesApp.Server.Data.Repositories.Implementations
                 foreach (AccountingSummary.Row row in summaryRows)
                     row.Operations = await QuerySummaryRowOperations(row).ToListAsync();
 
-                var summary = new AccountingSummary(summaryRows);
+                var summary = new AccountingSummary(period, summaryRows);
                 return summary;
             }
 

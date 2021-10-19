@@ -4,9 +4,11 @@ namespace ExpensesApp.Shared.Models.UtilityModels
 {
     public class AccountingSummary
     {
+        public AccountingPeriod AccountingPeriod { get; set; }
         public ICollection<Row> Rows { get; }
 
-        public AccountingSummary(ICollection<Row> rows = null) {
+        public AccountingSummary(AccountingPeriod accountingPeriod = null, ICollection<Row> rows = null) {
+            AccountingPeriod = accountingPeriod;
             Rows = rows ?? new List<Row>();
         }
 
